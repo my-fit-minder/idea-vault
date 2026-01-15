@@ -4,6 +4,8 @@ export interface Idea {
   user_id: string;
   title: string;
   content: string | null;
+  ai_context: string | null;
+  ai_report: string | null;
   tags: string[];
   created_at: string;
   updated_at: string;
@@ -27,11 +29,14 @@ export interface AuthState {
 export interface CreateIdeaInput {
   title: string;
   content?: string;
+  ai_context?: string;
   tags?: string[];
 }
 
 export interface UpdateIdeaInput {
   title?: string;
   content?: string;
+  ai_context?: string;
+  ai_report?: string;
   tags?: string[];
 }

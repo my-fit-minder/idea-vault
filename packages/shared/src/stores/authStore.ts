@@ -31,6 +31,14 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     try {
       set({ loading: true });
 
+      // Check if Supabase is properly configured
+      const supabaseUrl = (supabase as any).supabaseUrl;
+      if (!supabaseUrl || supabaseUrl === 'https://placeholder.supabase.co') {
+        console.error('Supabase not configured. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in .env file.');
+        set({ user: null, session: null, loading: false, initialized: true });
+        return;
+      }
+
       // Get initial session
       const { data: { session }, error } = await supabase.auth.getSession();
       
@@ -54,8 +62,9 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
           user: session?.user ? { id: session.user.id, email: session.user.email } : null,
         });
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error initializing auth:', error);
+      // Don't crash the app - just show as not authenticated
       set({ user: null, session: null, loading: false, initialized: true });
     }
   },

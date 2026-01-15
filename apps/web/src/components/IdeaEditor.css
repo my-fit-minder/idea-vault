@@ -1,0 +1,334 @@
+.idea-editor-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.idea-editor-card {
+  background: white;
+  border-radius: 12px;
+  padding: 32px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.editor-header {
+  margin-bottom: 24px;
+}
+
+.editor-header h2 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a202c;
+}
+
+.editor-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #4a5568;
+}
+
+.form-group input,
+.form-group textarea {
+  padding: 12px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.form-group textarea {
+  resize: vertical;
+}
+
+.form-group textarea#content {
+  min-height: auto;
+  height: auto;
+}
+
+.form-group textarea::placeholder {
+  font-size: 14px;
+  color: #a0aec0;
+}
+
+.form-group textarea.ai-context-textarea {
+  min-height: auto;
+  height: auto;
+}
+
+.form-group textarea.ai-context-textarea::placeholder {
+  font-size: 13px;
+  color: #a0aec0;
+}
+
+.tags-input-container {
+  display: flex;
+  gap: 8px;
+}
+
+.tags-input-container input {
+  flex: 1;
+}
+
+.add-tag-button {
+  padding: 12px 20px;
+  background: #f7fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  color: #4a5568;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.add-tag-button:hover {
+  background: #edf2f7;
+  border-color: #cbd5e0;
+}
+
+.tags-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.tags-list .tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: #edf2f7;
+  color: #4a5568;
+  border-radius: 16px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.remove-tag {
+  background: none;
+  border: none;
+  color: #718096;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+
+.remove-tag:hover {
+  background: #cbd5e0;
+  color: #2d3748;
+}
+
+.error-message {
+  padding: 12px;
+  background: #fed7d7;
+  color: #c53030;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.field-hint {
+  font-weight: 400;
+  color: #718096;
+  font-size: 12px;
+  margin-left: 8px;
+}
+
+.field-help-text {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #718096;
+  line-height: 1.5;
+  font-style: italic;
+}
+
+.editor-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding-top: 8px;
+}
+
+.cancel-button,
+.save-button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cancel-button {
+  background: #f7fafc;
+  color: #4a5568;
+  border: 2px solid #e2e8f0;
+}
+
+.cancel-button:hover:not(:disabled) {
+  background: #edf2f7;
+  border-color: #cbd5e0;
+}
+
+.save-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.save-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+}
+
+.cancel-button:disabled,
+.save-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .idea-editor-container {
+    max-width: 100%;
+    padding: 0 20px;
+  }
+
+  .idea-editor-card {
+    padding: 28px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .idea-editor-container {
+    padding: 0 16px;
+  }
+
+  .idea-editor-card {
+    padding: 20px;
+    border-radius: 8px;
+  }
+
+  .editor-header h2 {
+    font-size: 24px;
+  }
+
+  .editor-form {
+    gap: 20px;
+  }
+
+  .form-group input,
+  .form-group textarea {
+    font-size: 16px; /* Prevents zoom on iOS */
+    padding: 14px 16px;
+  }
+
+  .form-group textarea#content {
+    min-height: auto;
+  }
+
+  .tags-input-container {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .tags-input-container input {
+    width: 100%;
+  }
+
+  .add-tag-button {
+    width: 100%;
+    padding: 14px;
+  }
+
+  .editor-actions {
+    flex-direction: column-reverse;
+    gap: 10px;
+  }
+
+  .cancel-button,
+  .save-button {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+}
+
+/* Small mobile */
+@media (max-width: 480px) {
+  .idea-editor-container {
+    padding: 0 12px;
+  }
+
+  .idea-editor-card {
+    padding: 16px;
+  }
+
+  .editor-header {
+    margin-bottom: 20px;
+  }
+
+  .editor-header h2 {
+    font-size: 20px;
+  }
+
+  .editor-form {
+    gap: 16px;
+  }
+
+  .form-group label {
+    font-size: 13px;
+  }
+
+  .form-group textarea#content {
+    min-height: auto;
+  }
+
+  .tags-list .tag {
+    font-size: 12px;
+    padding: 5px 10px;
+  }
+
+  .remove-tag {
+    width: 18px;
+    height: 18px;
+    font-size: 16px;
+  }
+
+  .field-hint {
+    display: block;
+    margin-left: 0;
+    margin-top: 4px;
+  }
+
+  .field-help-text {
+    font-size: 11px;
+  }
+}
