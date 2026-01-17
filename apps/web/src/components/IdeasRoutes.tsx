@@ -1,6 +1,5 @@
 import { Routes, Route, Navigate, useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { useAuthStore } from '../lib/authStore';
 import { syncService } from '../lib/syncService';
 import type { Idea } from '@idea-vault/shared';
 import { IdeasList } from './IdeasList';
@@ -140,7 +139,11 @@ function EditIdeaPage() {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="initial-loading-container">
+        <div className="spinner"></div>
+      </div>
+    );
   }
 
   if (!idea) {
@@ -238,7 +241,11 @@ function ViewIdeaPage() {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="initial-loading-container">
+        <div className="spinner"></div>
+      </div>
+    );
   }
 
   if (!idea) {

@@ -127,6 +127,19 @@ export function IdeasApp() {
     );
   });
 
+  // Show full-screen centered loader only on initial load (when loading and no ideas yet)
+  const isInitialLoad = loading && ideas.length === 0;
+
+  if (isInitialLoad) {
+    return (
+      <div className="ideas-app">
+        <div className="initial-loading-container">
+          <div className="spinner"></div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="ideas-app">
       <header className="app-header">
