@@ -7,6 +7,7 @@ export class IdeasService {
       .from('ideas')
       .select('*')
       .eq('user_id', userId)
+      .eq('deleted', false) // Filter out soft-deleted items
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -22,6 +23,7 @@ export class IdeasService {
       .select('*')
       .eq('id', id)
       .eq('user_id', userId)
+      .eq('deleted', false) // Filter out soft-deleted items
       .single();
 
     if (error) {
@@ -43,7 +45,9 @@ export class IdeasService {
         content: input.content || null,
         ai_context: input.ai_context || null,
         ai_report: null, // Reports are generated separately
-        tags: input.tags || []
+        tags: input.tags || [],
+        archived: false,
+        deleted: false
       })
       .select()
       .single();
@@ -79,6 +83,14 @@ export class IdeasService {
       updateData.ai_report = input.ai_report;
     }
 
+    // Handle archived and deleted flags
+    if (input.archived !== undefined) {
+      updateData.archived = input.archived;
+    }
+    if (input.deleted !== undefined) {
+      updateData.deleted = input.deleted;
+    }
+
     const { data, error } = await getSupabaseAdmin()
       .from('ideas')
       .update(updateData)
@@ -95,7 +107,7 @@ export class IdeasService {
   }
 
   async deleteIdea(id: string, userId: string): Promise<void> {
-    // First verify ownership
+    // Soft delete - set deleted flag to true
     const existing = await this.getIdeaById(id, userId);
     if (!existing) {
       throw new Error('Idea not found');
@@ -103,13 +115,38 @@ export class IdeasService {
 
     const { error } = await getSupabaseAdmin()
       .from('ideas')
-      .delete()
+      .update({ deleted: true, updated_at: new Date().toISOString() })
       .eq('id', id)
       .eq('user_id', userId);
 
     if (error) {
       throw new Error(`Failed to delete idea: ${error.message}`);
     }
+  }
+
+  async archiveIdea(id: string, userId: string): Promise<Idea> {
+    // Toggle archive status
+    const existing = await this.getIdeaById(id, userId);
+    if (!existing) {
+      throw new Error('Idea not found');
+    }
+
+    const { data, error } = await getSupabaseAdmin()
+      .from('ideas')
+      .update({ 
+        archived: !existing.archived, 
+        updated_at: new Date().toISOString() 
+      })
+      .eq('id', id)
+      .eq('user_id', userId)
+      .select()
+      .single();
+
+    if (error) {
+      throw new Error(`Failed to archive idea: ${error.message}`);
+    }
+
+    return data;
   }
 }
 

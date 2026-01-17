@@ -31,8 +31,32 @@ ideasRouter.post('/', async (req: AuthRequest, res) => {
     return res.status(400).json({ error: 'Title is required' });
   }
 
+  // Create the idea first
   const idea = await ideasService.createIdea(input, req.user.id);
-  res.status(201).json(idea);
+
+  // Automatically generate AI report for new ideas
+  try {
+    const report = await aiService.generateReport({
+      title: idea.title,
+      content: idea.content,
+      ai_context: idea.ai_context,
+      tags: idea.tags,
+    });
+
+    // Update the idea with the generated report
+    const updatedIdea = await ideasService.updateIdea(
+      idea.id,
+      { ai_report: report },
+      req.user.id
+    );
+
+    res.status(201).json(updatedIdea);
+  } catch (error: any) {
+    // If report generation fails, still return the idea without the report
+    // User can manually regenerate it later
+    console.error('Failed to auto-generate report for new idea:', error);
+    res.status(201).json(idea);
+  }
 });
 
 // POST /api/ideas/:id/generate-report - Generate AI report for an idea
@@ -103,7 +127,21 @@ ideasRouter.put('/:id', async (req: AuthRequest, res) => {
   res.json(idea);
 });
 
-// DELETE /api/ideas/:id - Delete an idea
+// POST /api/ideas/:id/archive - Archive/unarchive an idea
+ideasRouter.post('/:id/archive', async (req: AuthRequest, res) => {
+  if (!req.user) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  try {
+    const idea = await ideasService.archiveIdea(req.params.id, req.user.id);
+    res.json(idea);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message || 'Failed to archive idea' });
+  }
+});
+
+// DELETE /api/ideas/:id - Soft delete an idea
 ideasRouter.delete('/:id', async (req: AuthRequest, res) => {
   if (!req.user) {
     return res.status(401).json({ error: 'Unauthorized' });

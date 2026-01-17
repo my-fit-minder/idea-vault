@@ -12,6 +12,9 @@
 
 .editor-header {
   margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
 }
 
 .editor-header h2 {
@@ -19,6 +22,26 @@
   font-size: 28px;
   font-weight: 700;
   color: #1a202c;
+}
+
+.editor-header .back-button {
+  padding: 8px 16px;
+  background: #f7fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  color: #4a5568;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.editor-header .back-button:hover {
+  background: #edf2f7;
+  border-color: #cbd5e0;
+  color: #2d3748;
 }
 
 .editor-form {
@@ -234,6 +257,16 @@
   .idea-editor-card {
     padding: 20px;
     border-radius: 8px;
+  }
+
+  .editor-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .editor-header .back-button {
+    align-self: flex-start;
   }
 
   .editor-header h2 {

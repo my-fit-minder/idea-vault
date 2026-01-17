@@ -13,51 +13,26 @@ export function IdeasApp() {
   const { user, signOut } = useAuthStore();
   const [ideas, setIdeas] = useState<Idea[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [view, setView] = useState<View>('list');
   const [selectedIdea, setSelectedIdea] = useState<Idea | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [isOnline, setIsOnline] = useState(navigator.onLine);
 
-  const loadIdeas = async () => {
+  const loadIdeas = async (): Promise<void> => {
+    setLoading(true);
     try {
-      setLoading(true);
-      setError(null);
-      const data = await syncService.getIdeasWithOfflineSupport();
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+      const data = await syncService.getIdeas();
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       setIdeas(data);
-      
-      // Try to sync in background
-      if (navigator.onLine) {
-        syncService.sync().then(({ synced }) => {
-          if (synced > 0) {
-            loadIdeas(); // Reload after sync
-          }
-        });
-      }
-    } catch (err: any) {
-      setError(err.message || 'Failed to load ideas');
+    } catch {
+      // Silently fail - errors are logged by the service
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    loadIdeas();
-    
-    // Listen for online/offline events
-    const handleOnline = () => {
-      setIsOnline(true);
-      loadIdeas(); // Try to sync when coming back online
-    };
-    const handleOffline = () => setIsOnline(false);
-    
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-    
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
-    };
+    void loadIdeas();
   }, []);
 
   const handleCreate = () => {
@@ -81,14 +56,16 @@ export function IdeasApp() {
     }
 
     try {
-      await syncService.deleteIdeaWithOfflineSupport(id);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      await syncService.deleteIdea(id);
       await loadIdeas();
       if (selectedIdea?.id === id) {
         setView('list');
         setSelectedIdea(null);
       }
-    } catch (err: any) {
-      alert(err.message || 'Failed to delete idea');
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to delete idea';
+      alert(errorMessage);
     }
   };
 
@@ -110,9 +87,34 @@ export function IdeasApp() {
       
       // Reload ideas to get the updated data
       await loadIdeas();
-    } catch (error: any) {
-      alert(error.message || 'Failed to generate AI report');
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to generate AI report';
+      alert(errorMessage);
     }
+  };
+
+  const handleArchive = async (idea: Idea) => {
+    try {
+      const { apiClient } = await import('../lib/apiClient');
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+      const updatedIdea = await apiClient.ideas.archive(idea.id);
+      
+      // Update the selected idea if it's the archived one
+      if (selectedIdea?.id === idea.id) {
+        setSelectedIdea(updatedIdea as Idea);
+      }
+      
+      // Reload ideas to get the updated data
+      await loadIdeas();
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to archive idea';
+      alert(errorMessage);
+    }
+  };
+
+  const handleGoHome = () => {
+    setView('list');
+    setSelectedIdea(null);
   };
 
   const filteredIdeas = ideas.filter((idea) => {
@@ -129,15 +131,22 @@ export function IdeasApp() {
     <div className="ideas-app">
       <header className="app-header">
         <div className="header-content">
-          <h1>💡 Idea Vault</h1>
+          <h1 className="app-logo" onClick={handleGoHome} title="Go to home">
+            💡 Idea Vault
+          </h1>
           <div className="header-actions">
-            <div className={`status-indicator ${isOnline ? 'online' : 'offline'}`}>
-              {isOnline ? '🟢 Online' : '🔴 Offline'}
-            </div>
+            <button onClick={handleGoHome} className="home-button" title="Go to home">
+              🏠 Home
+            </button>
             <div className="user-info">
               <span>{user?.email}</span>
             </div>
-            <button onClick={signOut} className="sign-out-button">
+            <button 
+              onClick={() => {
+                void signOut();
+              }} 
+              className="sign-out-button"
+            >
               Sign Out
             </button>
           </div>
@@ -149,25 +158,36 @@ export function IdeasApp() {
           <IdeasList
             ideas={filteredIdeas}
             loading={loading}
-            error={error}
+            error={null}
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
             onCreate={handleCreate}
             onEdit={handleEdit}
             onView={handleView}
-            onDelete={handleDelete}
-            onRefresh={loadIdeas}
+            onDelete={(id: string) => {
+              void handleDelete(id);
+            }}
+            onRefresh={() => {
+              void loadIdeas();
+            }}
           />
         )}
 
         {view === 'create' && (
-          <IdeaEditor onSave={handleSave} onCancel={() => setView('list')} />
+          <IdeaEditor 
+            onSave={() => {
+              void handleSave();
+            }} 
+            onCancel={() => setView('list')} 
+          />
         )}
 
         {view === 'edit' && selectedIdea && (
           <IdeaEditor
             idea={selectedIdea}
-            onSave={handleSave}
+            onSave={() => {
+              void handleSave();
+            }}
             onCancel={() => setView('list')}
           />
         )}
@@ -176,7 +196,12 @@ export function IdeasApp() {
           <IdeaDetail
             idea={selectedIdea}
             onEdit={() => handleEdit(selectedIdea)}
-            onDelete={() => handleDelete(selectedIdea.id)}
+            onDelete={() => {
+              void handleDelete(selectedIdea.id);
+            }}
+            onArchive={() => {
+              void handleArchive(selectedIdea);
+            }}
             onClose={() => setView('list')}
             onRegenerate={handleRegenerateAI}
           />

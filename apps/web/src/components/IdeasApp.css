@@ -28,33 +28,51 @@
   color: #1a202c;
 }
 
+.app-logo {
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
+}
+
+.app-logo:hover {
+  color: #667eea;
+  transform: scale(1.05);
+}
+
+.app-logo:active {
+  transform: scale(0.98);
+}
+
 .header-actions {
   display: flex;
   align-items: center;
   gap: 16px;
 }
 
-.status-indicator {
-  font-size: 12px;
-  font-weight: 600;
-  padding: 4px 12px;
-  border-radius: 12px;
-  background: #f7fafc;
-}
-
-.status-indicator.online {
-  color: #22543d;
-  background: #c6f6d5;
-}
-
-.status-indicator.offline {
-  color: #742a2a;
-  background: #fed7d7;
-}
-
 .user-info {
   color: #718096;
   font-size: 14px;
+}
+
+.home-button {
+  padding: 8px 16px;
+  background: #f7fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  color: #4a5568;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.home-button:hover {
+  background: #edf2f7;
+  border-color: #cbd5e0;
+  color: #667eea;
 }
 
 .sign-out-button {
@@ -111,9 +129,9 @@
     gap: 8px;
   }
 
-  .status-indicator {
-    font-size: 11px;
-    padding: 4px 10px;
+  .home-button {
+    padding: 10px 14px;
+    font-size: 13px;
   }
 
   .user-info {
@@ -150,8 +168,8 @@
     gap: 8px;
   }
 
-  .status-indicator,
   .user-info,
+  .home-button,
   .sign-out-button {
     width: 100%;
     text-align: center;

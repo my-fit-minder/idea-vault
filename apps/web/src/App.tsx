@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthStore } from './lib/authStore';
 import { AuthPage } from './components/AuthPage';
-import { IdeasApp } from './components/IdeasApp';
+import { IdeasRoutes } from './components/IdeasRoutes';
 import './App.css';
 
 function App() {
@@ -43,11 +44,15 @@ function App() {
     );
   }
 
-  if (!user) {
-    return <AuthPage />;
-  }
-
-  return <IdeasApp />;
+  return (
+    <Routes>
+      {!user ? (
+        <Route path="*" element={<AuthPage />} />
+      ) : (
+        <Route path="/*" element={<IdeasRoutes />} />
+      )}
+    </Routes>
+  );
 }
 
 export default App;

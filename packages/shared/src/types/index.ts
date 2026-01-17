@@ -7,6 +7,8 @@ export interface Idea {
   ai_context: string | null;
   ai_report: string | null;
   tags: string[];
+  archived: boolean;
+  deleted: boolean;
   created_at: string;
   updated_at: string;
   synced_at: string | null;
@@ -39,4 +41,6 @@ export interface UpdateIdeaInput {
   ai_context?: string;
   ai_report?: string;
   tags?: string[];
+  archived?: boolean;
+  deleted?: boolean;
 }

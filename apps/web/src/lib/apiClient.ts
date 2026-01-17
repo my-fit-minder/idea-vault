@@ -90,6 +90,12 @@ export const apiClient = {
       });
     },
 
+    archive: (id: string): Promise<Idea> => {
+      return request<Idea>(`/api/ideas/${id}/archive`, {
+        method: 'POST',
+      });
+    },
+
     generateReport: (id: string): Promise<{ report: string; idea: Idea }> => {
       return request<{ report: string; idea: Idea }>(`/api/ideas/${id}/generate-report`, {
         method: 'POST',

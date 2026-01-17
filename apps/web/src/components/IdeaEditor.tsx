@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { syncService } from "../lib/syncService";
 import type {
   Idea,
@@ -14,6 +15,7 @@ interface IdeaEditorProps {
 }
 
 export function IdeaEditor({ idea, onSave, onCancel }: IdeaEditorProps) {
+  const navigate = useNavigate();
   const [title, setTitle] = useState(idea?.title || "");
   const [content, setContent] = useState(idea?.content || "");
   const [aiContext, setAiContext] = useState(idea?.ai_context || "");
@@ -41,7 +43,8 @@ export function IdeaEditor({ idea, onSave, onCancel }: IdeaEditorProps) {
           ai_context: aiContext || undefined,
           tags,
         };
-        await syncService.updateIdeaWithOfflineSupport(idea.id, input);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        await syncService.updateIdea(idea.id, input);
       } else {
         const input: CreateIdeaInput = {
           title,
@@ -49,7 +52,8 @@ export function IdeaEditor({ idea, onSave, onCancel }: IdeaEditorProps) {
           ai_context: aiContext || undefined,
           tags,
         };
-        await syncService.createIdeaWithOfflineSupport(input);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        await syncService.createIdea(input);
       }
       onSave();
     } catch (err) {
@@ -84,6 +88,15 @@ export function IdeaEditor({ idea, onSave, onCancel }: IdeaEditorProps) {
     <div className="idea-editor-container">
       <div className="idea-editor-card">
         <div className="editor-header">
+          <button 
+            onClick={() => {
+              void navigate(-1);
+            }} 
+            className="back-button"
+            title="Go back"
+          >
+            ← Back
+          </button>
           <h2>{idea ? "Edit Idea" : "Create New Idea"}</h2>
         </div>
 
