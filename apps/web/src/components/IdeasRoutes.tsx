@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate, useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { useAuthStore } from '../lib/authStore';
+import { Loader2 } from 'lucide-react';
 import { syncService } from '../lib/syncService';
 import type { Idea } from '@idea-vault/shared';
 import { IdeasList } from './IdeasList';
@@ -140,7 +140,11 @@ function EditIdeaPage() {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="initial-loading-container">
+        <Loader2 className="spinner" size={40} />
+      </div>
+    );
   }
 
   if (!idea) {
@@ -238,7 +242,11 @@ function ViewIdeaPage() {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="initial-loading-container">
+        <Loader2 className="spinner" size={40} />
+      </div>
+    );
   }
 
   if (!idea) {

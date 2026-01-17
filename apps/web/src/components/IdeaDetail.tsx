@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
+import { ChevronLeft, MoreVertical, Edit, Archive, ArchiveRestore, Trash2, ChevronDown, ChevronRight, Sparkles, RefreshCw } from 'lucide-react';
 import { type Idea } from '@idea-vault/shared';
 import { DropdownMenu, DropdownMenuItem } from './DropdownMenu';
 import './IdeaDetail.css';
@@ -44,19 +45,14 @@ export function IdeaDetail({ idea, onEdit, onDelete, onArchive, onRegenerate }: 
               className="back-button"
               title="Go back"
             >
-              ← Back
+              <ChevronLeft size={20} />
             </button>
-            <div>
+            <div className="title-container">
               <h1>{idea.title}</h1>
               <div className="detail-meta">
                 <span className="detail-date">
-                  Created: {new Date(idea.created_at).toLocaleString()}
+                  Created: {new Date(idea.created_at).toLocaleDateString()}
                 </span>
-                {idea.updated_at !== idea.created_at && (
-                  <span className="detail-date">
-                    Updated: {new Date(idea.updated_at).toLocaleString()}
-                  </span>
-                )}
               </div>
             </div>
           </div>
@@ -69,20 +65,30 @@ export function IdeaDetail({ idea, onEdit, onDelete, onArchive, onRegenerate }: 
                 className="action-button regenerate"
                 disabled={regenerating}
               >
-                {regenerating ? '🔄 Regenerating...' : '🤖 Regenerate AI Report'}
+                {regenerating ? (
+                  <>
+                    <RefreshCw size={16} className="spinning" />
+                    <span>Regenerating...</span>
+                  </>
+                ) : (
+                  <>
+                    <Sparkles size={16} />
+                    <span>Regenerate AI Report</span>
+                  </>
+                )}
               </button>
             )}
-            <DropdownMenu trigger={<span>⋮</span>}>
-              <DropdownMenuItem icon="✏️" onClick={onEdit}>
+            <DropdownMenu trigger={<MoreVertical size={20} />}>
+              <DropdownMenuItem icon={<Edit size={16} />} onClick={onEdit}>
                 Edit
               </DropdownMenuItem>
               <DropdownMenuItem 
-                icon={idea.archived ? "📦" : "📦"} 
+                icon={idea.archived ? <ArchiveRestore size={16} /> : <Archive size={16} />} 
                 onClick={onArchive}
               >
                 {idea.archived ? 'Unarchive' : 'Archive'}
               </DropdownMenuItem>
-              <DropdownMenuItem icon="🗑️" onClick={onDelete} danger>
+              <DropdownMenuItem icon={<Trash2 size={16} />} onClick={onDelete} danger>
                 Delete
               </DropdownMenuItem>
             </DropdownMenu>
@@ -136,7 +142,7 @@ export function IdeaDetail({ idea, onEdit, onDelete, onArchive, onRegenerate }: 
                 onClick={() => setIsReportExpanded(!isReportExpanded)}
                 aria-label={isReportExpanded ? 'Collapse report' : 'Expand report'}
               >
-                {isReportExpanded ? '▼' : '▶'}
+                {isReportExpanded ? <ChevronDown size={20} /> : <ChevronRight size={20} />}
               </button>
             </div>
             {isReportExpanded && (

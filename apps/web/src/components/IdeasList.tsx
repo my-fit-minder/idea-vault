@@ -1,3 +1,4 @@
+import { Loader2, RefreshCw, Plus, Edit, Trash2 } from 'lucide-react';
 import { type Idea } from '@idea-vault/shared';
 import './IdeasList.css';
 
@@ -40,10 +41,12 @@ export function IdeasList({
         </div>
         <div className="actions">
           <button onClick={onRefresh} className="refresh-button">
-            🔄 Refresh
+            <RefreshCw size={18} />
+            <span>Refresh</span>
           </button>
           <button onClick={onCreate} className="create-button">
-            + New Idea
+            <Plus size={18} />
+            <span>New Idea</span>
           </button>
         </div>
       </div>
@@ -57,7 +60,7 @@ export function IdeasList({
 
       {loading && (
         <div className="loading-state">
-          <div className="spinner"></div>
+          <Loader2 className="spinner" size={40} />
           <p>Loading ideas...</p>
         </div>
       )}
@@ -68,7 +71,8 @@ export function IdeasList({
           <h2>No ideas yet</h2>
           <p>Create your first idea to get started!</p>
           <button onClick={onCreate} className="create-button">
-            + Create Idea
+            <Plus size={18} />
+            <span>Create Idea</span>
           </button>
         </div>
       )}
@@ -88,7 +92,7 @@ export function IdeasList({
                     className="icon-button"
                     title="Edit"
                   >
-                    ✏️
+                    <Edit size={16} />
                   </button>
                   <button
                     onClick={(e) => {
@@ -98,7 +102,7 @@ export function IdeasList({
                     className="icon-button delete"
                     title="Delete"
                   >
-                    🗑️
+                    <Trash2 size={16} />
                   </button>
                 </div>
               </div>

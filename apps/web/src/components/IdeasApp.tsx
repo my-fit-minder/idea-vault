@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Loader2 } from 'lucide-react';
 import { useAuthStore } from '../lib/authStore';
 import { syncService } from '../lib/syncService';
 import type { Idea } from '@idea-vault/shared';
@@ -127,6 +128,19 @@ export function IdeasApp() {
     );
   });
 
+  // Show full-screen centered loader only on initial load (when loading and no ideas yet)
+  const isInitialLoad = loading && ideas.length === 0;
+
+  if (isInitialLoad) {
+    return (
+      <div className="ideas-app">
+        <div className="initial-loading-container">
+          <Loader2 className="spinner" size={40} />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="ideas-app">
       <header className="app-header">
@@ -143,7 +157,9 @@ export function IdeasApp() {
             </div>
             <button 
               onClick={() => {
-                void signOut();
+                if (confirm('Are you sure you want to sign out?')) {
+                  void signOut();
+                }
               }} 
               className="sign-out-button"
             >

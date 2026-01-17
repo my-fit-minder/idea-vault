@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ChevronLeft } from "lucide-react";
 import { syncService } from "../lib/syncService";
 import type {
   Idea,
@@ -29,6 +30,16 @@ export function IdeaEditor({ idea, onSave, onCancel }: IdeaEditorProps) {
 
     if (!title.trim()) {
       setError("Title is required");
+      return;
+    }
+
+    if (title.length > 50) {
+      setError("Title must be 50 characters or less");
+      return;
+    }
+
+    if (content && content.length > 1000) {
+      setError("Description must be 1000 characters or less");
       return;
     }
 
@@ -88,14 +99,14 @@ export function IdeaEditor({ idea, onSave, onCancel }: IdeaEditorProps) {
     <div className="idea-editor-container">
       <div className="idea-editor-card">
         <div className="editor-header">
-          <button 
+          <button
             onClick={() => {
               void navigate(-1);
-            }} 
+            }}
             className="back-button"
             title="Go back"
           >
-            ← Back
+            <ChevronLeft size={20} />
           </button>
           <h2>{idea ? "Edit Idea" : "Create New Idea"}</h2>
         </div>
@@ -119,8 +130,12 @@ export function IdeaEditor({ idea, onSave, onCancel }: IdeaEditorProps) {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Enter idea title..."
+              maxLength={50}
               required
             />
+            <span className={`char-count ${title.length >= 50 ? 'char-count-limit' : ''}`}>
+              {title.length}/50
+            </span>
           </div>
 
           <div className="form-group">
@@ -131,7 +146,11 @@ export function IdeaEditor({ idea, onSave, onCancel }: IdeaEditorProps) {
               onChange={(e) => setContent(e.target.value)}
               placeholder="Describe your idea..."
               rows={5}
+              maxLength={1000}
             />
+            <span className={`char-count ${content.length >= 1000 ? 'char-count-limit' : ''}`}>
+              {content.length}/1000
+            </span>
           </div>
 
           <div className="form-group">
@@ -202,7 +221,7 @@ export function IdeaEditor({ idea, onSave, onCancel }: IdeaEditorProps) {
             <button
               type="submit"
               className="save-button"
-              disabled={loading || !title.trim()}
+              disabled={loading || !title.trim() || title.length > 50 || (content && content.length > 1000) || undefined}
             >
               {loading ? "Saving..." : idea ? "Update" : "Create"}
             </button>
