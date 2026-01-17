@@ -191,6 +191,18 @@
   font-style: italic;
 }
 
+.char-count {
+  font-size: 12px;
+  color: #718096;
+  text-align: right;
+  margin-top: 4px;
+}
+
+.char-count-limit {
+  color: #c53030;
+  font-weight: 600;
+}
+
 .editor-actions {
   display: flex;
   gap: 12px;

@@ -32,6 +32,16 @@ export function IdeaEditor({ idea, onSave, onCancel }: IdeaEditorProps) {
       return;
     }
 
+    if (title.length > 50) {
+      setError("Title must be 50 characters or less");
+      return;
+    }
+
+    if (content && content.length > 1000) {
+      setError("Description must be 1000 characters or less");
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
@@ -88,10 +98,10 @@ export function IdeaEditor({ idea, onSave, onCancel }: IdeaEditorProps) {
     <div className="idea-editor-container">
       <div className="idea-editor-card">
         <div className="editor-header">
-          <button 
+          <button
             onClick={() => {
               void navigate(-1);
-            }} 
+            }}
             className="back-button"
             title="Go back"
           >
@@ -119,8 +129,12 @@ export function IdeaEditor({ idea, onSave, onCancel }: IdeaEditorProps) {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Enter idea title..."
+              maxLength={50}
               required
             />
+            <span className={`char-count ${title.length >= 50 ? 'char-count-limit' : ''}`}>
+              {title.length}/50
+            </span>
           </div>
 
           <div className="form-group">
@@ -131,7 +145,11 @@ export function IdeaEditor({ idea, onSave, onCancel }: IdeaEditorProps) {
               onChange={(e) => setContent(e.target.value)}
               placeholder="Describe your idea..."
               rows={5}
+              maxLength={1000}
             />
+            <span className={`char-count ${content.length >= 1000 ? 'char-count-limit' : ''}`}>
+              {content.length}/1000
+            </span>
           </div>
 
           <div className="form-group">
@@ -202,7 +220,7 @@ export function IdeaEditor({ idea, onSave, onCancel }: IdeaEditorProps) {
             <button
               type="submit"
               className="save-button"
-              disabled={loading || !title.trim()}
+              disabled={loading || !title.trim() || title.length > 50 || (content && content.length > 1000) || undefined}
             >
               {loading ? "Saving..." : idea ? "Update" : "Create"}
             </button>

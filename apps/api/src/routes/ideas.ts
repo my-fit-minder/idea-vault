@@ -31,6 +31,14 @@ ideasRouter.post('/', async (req: AuthRequest, res) => {
     return res.status(400).json({ error: 'Title is required' });
   }
 
+  if (input.title.length > 50) {
+    return res.status(400).json({ error: 'Title must be 50 characters or less' });
+  }
+
+  if (input.content && input.content.length > 1000) {
+    return res.status(400).json({ error: 'Description must be 1000 characters or less' });
+  }
+
   // Create the idea first
   const idea = await ideasService.createIdea(input, req.user.id);
 
@@ -68,7 +76,7 @@ ideasRouter.post('/:id/generate-report', async (req: AuthRequest, res) => {
 
   try {
     // Get the idea first to verify ownership
-    const idea = await ideasService.getIdeaById(req.params.id, req.user.id);
+    const idea = await ideasService.getIdeaById(req.params.id as string, req.user.id);
     
     if (!idea) {
       return res.status(404).json({ error: 'Idea not found' });
@@ -84,7 +92,7 @@ ideasRouter.post('/:id/generate-report', async (req: AuthRequest, res) => {
 
     // Update the idea with the generated report
     const updatedIdea = await ideasService.updateIdea(
-      req.params.id,
+      req.params.id as string,
       { ai_report: report },
       req.user.id
     );
@@ -102,7 +110,7 @@ ideasRouter.get('/:id', async (req: AuthRequest, res) => {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
-  const idea = await ideasService.getIdeaById(req.params.id, req.user.id);
+  const idea = await ideasService.getIdeaById(req.params.id as string, req.user.id);
   
   if (!idea) {
     return res.status(404).json({ error: 'Idea not found' });
@@ -123,7 +131,15 @@ ideasRouter.put('/:id', async (req: AuthRequest, res) => {
     return res.status(400).json({ error: 'Title cannot be empty' });
   }
 
-  const idea = await ideasService.updateIdea(req.params.id, input, req.user.id);
+  if (input.title !== undefined && input.title.length > 50) {
+    return res.status(400).json({ error: 'Title must be 50 characters or less' });
+  }
+
+  if (input.content !== undefined && input.content.length > 1000) {
+    return res.status(400).json({ error: 'Description must be 1000 characters or less' });
+  }
+
+  const idea = await ideasService.updateIdea(req.params.id as string, input, req.user.id);
   res.json(idea);
 });
 
@@ -134,7 +150,7 @@ ideasRouter.post('/:id/archive', async (req: AuthRequest, res) => {
   }
 
   try {
-    const idea = await ideasService.archiveIdea(req.params.id, req.user.id);
+    const idea = await ideasService.archiveIdea(req.params.id as string, req.user.id);
     res.json(idea);
   } catch (error: any) {
     res.status(500).json({ error: error.message || 'Failed to archive idea' });
@@ -147,6 +163,6 @@ ideasRouter.delete('/:id', async (req: AuthRequest, res) => {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
-  await ideasService.deleteIdea(req.params.id, req.user.id);
+  await ideasService.deleteIdea(req.params.id as string, req.user.id);
   res.status(204).send();
 });
