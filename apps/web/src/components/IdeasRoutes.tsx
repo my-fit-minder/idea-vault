@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate, useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { Loader2 } from 'lucide-react';
 import { syncService } from '../lib/syncService';
 import type { Idea } from '@idea-vault/shared';
 import { IdeasList } from './IdeasList';
@@ -141,7 +142,7 @@ function EditIdeaPage() {
   if (loading) {
     return (
       <div className="initial-loading-container">
-        <div className="spinner"></div>
+        <Loader2 className="spinner" size={40} />
       </div>
     );
   }
@@ -243,7 +244,7 @@ function ViewIdeaPage() {
   if (loading) {
     return (
       <div className="initial-loading-container">
-        <div className="spinner"></div>
+        <Loader2 className="spinner" size={40} />
       </div>
     );
   }

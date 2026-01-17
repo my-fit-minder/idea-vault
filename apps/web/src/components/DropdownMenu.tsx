@@ -65,7 +65,7 @@ export function DropdownMenu({ children, trigger }: DropdownMenuProps) {
 interface DropdownMenuItemProps {
   onClick: () => void;
   children: React.ReactNode;
-  icon?: string;
+  icon?: React.ReactNode;
   danger?: boolean;
 }
 

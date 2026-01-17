@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Loader2 } from 'lucide-react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthStore } from './lib/authStore';
 import { AuthPage } from './components/AuthPage';
@@ -21,7 +22,7 @@ function App() {
   if (loading || !initialized) {
     return (
       <div className="loading-container">
-        <div className="spinner"></div>
+        <Loader2 className="spinner" size={40} />
         <p>Loading...</p>
         {initError && (
           <div style={{

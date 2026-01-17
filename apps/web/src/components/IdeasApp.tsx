@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Loader2 } from 'lucide-react';
 import { useAuthStore } from '../lib/authStore';
 import { syncService } from '../lib/syncService';
 import type { Idea } from '@idea-vault/shared';
@@ -134,7 +135,7 @@ export function IdeasApp() {
     return (
       <div className="ideas-app">
         <div className="initial-loading-container">
-          <div className="spinner"></div>
+          <Loader2 className="spinner" size={40} />
         </div>
       </div>
     );

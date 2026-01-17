@@ -27,18 +27,29 @@
   flex: 1;
 }
 
+.title-container {
+  flex: 1;
+  min-width: 0;
+}
+
 .back-button {
-  padding: 8px 16px;
+  padding: 8px;
   background: #f7fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 6px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
   color: #4a5568;
   cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 18px;
+  font-weight: 600;
   transition: all 0.2s;
   white-space: nowrap;
   flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
 }
 
 .back-button:hover {
@@ -79,6 +90,9 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .action-button.edit {
@@ -114,16 +128,40 @@
 .action-button.regenerate {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
+  border: 2px solid transparent;
+  padding: 12px 20px;
+  font-size: 15px;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
 }
 
 .action-button.regenerate:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+  background: linear-gradient(135deg, #7c8ef0 0%, #8a5fb8 100%);
+}
+
+.action-button.regenerate:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
 }
 
 .action-button.regenerate:disabled {
-  opacity: 0.7;
+  opacity: 0.6;
   cursor: not-allowed;
+  transform: none;
+}
+
+.action-button.regenerate .spinning {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .detail-content {
