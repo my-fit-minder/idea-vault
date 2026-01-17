@@ -157,7 +157,9 @@ export function IdeasApp() {
             </div>
             <button 
               onClick={() => {
-                void signOut();
+                if (confirm('Are you sure you want to sign out?')) {
+                  void signOut();
+                }
               }} 
               className="sign-out-button"
             >

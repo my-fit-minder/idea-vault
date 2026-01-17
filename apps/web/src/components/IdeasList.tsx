@@ -58,7 +58,7 @@ export function IdeasList({
         </div>
       )}
 
-      {loading && ideas.length === 0 && (
+      {loading && (
         <div className="loading-state">
           <Loader2 className="spinner" size={40} />
           <p>Loading ideas...</p>

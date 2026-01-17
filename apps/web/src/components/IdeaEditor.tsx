@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ChevronLeft } from "lucide-react";
 import { syncService } from "../lib/syncService";
 import type {
   Idea,
@@ -105,7 +106,7 @@ export function IdeaEditor({ idea, onSave, onCancel }: IdeaEditorProps) {
             className="back-button"
             title="Go back"
           >
-            ← Back
+            <ChevronLeft size={20} />
           </button>
           <h2>{idea ? "Edit Idea" : "Create New Idea"}</h2>
         </div>

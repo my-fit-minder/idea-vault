@@ -11,7 +11,9 @@ export function IdeasAppHeader() {
   };
 
   const handleSignOut = () => {
-    void signOut();
+    if (confirm('Are you sure you want to sign out?')) {
+      void signOut();
+    }
   };
 
   return (
