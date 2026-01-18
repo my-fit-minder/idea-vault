@@ -2,22 +2,78 @@ import { Router } from 'express';
 import { authenticate, AuthRequest } from '../middleware/auth.js';
 import { ideasService } from '../services/ideasService.js';
 import { aiService } from '../services/aiService.js';
-import type { CreateIdeaInput, UpdateIdeaInput } from '@idea-vault/shared';
+import type { CreateIdeaInput, UpdateIdeaInput, PaginationParams } from '@idea-vault/shared';
 
 export const ideasRouter = Router();
 
 // All routes require authentication
 ideasRouter.use(authenticate);
 
-// GET /api/ideas - Get all ideas for the authenticated user
+// GET /api/ideas - Get ideas for the authenticated user (with optional pagination)
 ideasRouter.get('/', async (req: AuthRequest, res) => {
   if (!req.user) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
-  const ideas = await ideasService.getAllIdeas(req.user.id);
+  // Check if pagination parameters are provided
+  const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : undefined;
+  const offset = req.query.offset ? parseInt(req.query.offset as string, 10) : undefined;
+  
+  // Extract archived filter
+  const archived = req.query.archived !== undefined 
+    ? req.query.archived === 'true' 
+    : undefined;
+
+  // Extract search query
+  const search = req.query.search ? (req.query.search as string).trim() : undefined;
+
+  // If pagination params are provided, use paginated endpoint
+  if (limit !== undefined || offset !== undefined) {
+    const paginationParams: PaginationParams = {
+      limit: limit ?? 20,
+      offset: offset ?? 0,
+      archived,
+      search: search && search.length > 0 ? search : undefined,
+    };
+
+    const result = await ideasService.getIdeasPaginated(req.user.id, paginationParams);
+    return res.json(result);
+  }
+
+  // Otherwise, return all ideas (backward compatibility)
+  const ideas = await ideasService.getAllIdeas(req.user.id, archived);
   res.json(ideas);
 });
+
+/**
+ * Generate AI report in the background and update the idea when complete
+ * This runs asynchronously and doesn't block the API response
+ */
+function generateReportInBackground(
+  ideaId: string,
+  userId: string,
+  ideaData: { title: string; content: string | null; ai_context: string | null; tags: string[] }
+): void {
+  // Use setImmediate to ensure this runs after the response is sent
+  setImmediate(async () => {
+    try {
+      const report = await aiService.generateReport({
+        title: ideaData.title,
+        content: ideaData.content,
+        ai_context: ideaData.ai_context,
+        tags: ideaData.tags,
+      });
+
+      // Update the idea with the generated report
+      await ideasService.updateIdea(ideaId, { ai_report: report }, userId);
+      console.log(`✅ Successfully generated AI report for idea ${ideaId}`);
+    } catch (error: any) {
+      // Log error but don't throw - the idea was already created successfully
+      console.error(`❌ Failed to generate AI report for idea ${ideaId}:`, error.message);
+      // The idea exists without a report - user can manually regenerate it later
+    }
+  });
+}
 
 // POST /api/ideas - Create a new idea
 ideasRouter.post('/', async (req: AuthRequest, res) => {
@@ -42,29 +98,17 @@ ideasRouter.post('/', async (req: AuthRequest, res) => {
   // Create the idea first
   const idea = await ideasService.createIdea(input, req.user.id);
 
-  // Automatically generate AI report for new ideas
-  try {
-    const report = await aiService.generateReport({
-      title: idea.title,
-      content: idea.content,
-      ai_context: idea.ai_context,
-      tags: idea.tags,
-    });
+  // Start AI report generation in the background (non-blocking)
+  // The response is sent immediately, and the report will be added when ready
+  generateReportInBackground(idea.id, req.user.id, {
+    title: idea.title,
+    content: idea.content,
+    ai_context: idea.ai_context,
+    tags: idea.tags,
+  });
 
-    // Update the idea with the generated report
-    const updatedIdea = await ideasService.updateIdea(
-      idea.id,
-      { ai_report: report },
-      req.user.id
-    );
-
-    res.status(201).json(updatedIdea);
-  } catch (error: any) {
-    // If report generation fails, still return the idea without the report
-    // User can manually regenerate it later
-    console.error('Failed to auto-generate report for new idea:', error);
-    res.status(201).json(idea);
-  }
+  // Return immediately with the idea (without waiting for AI report)
+  res.status(201).json(idea);
 });
 
 // POST /api/ideas/:id/generate-report - Generate AI report for an idea

@@ -96,6 +96,27 @@
   color: #667eea;
 }
 
+.settings-button {
+  padding: 8px 16px;
+  background: #f7fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  color: #4a5568;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.settings-button:hover {
+  background: #edf2f7;
+  border-color: #cbd5e0;
+  color: #667eea;
+}
+
 .sign-out-button {
   padding: 8px 16px;
   background: #f7fafc;
@@ -150,7 +171,8 @@
     gap: 8px;
   }
 
-  .home-button {
+  .home-button,
+  .settings-button {
     padding: 10px 14px;
     font-size: 13px;
   }
@@ -191,6 +213,7 @@
 
   .user-info,
   .home-button,
+  .settings-button,
   .sign-out-button {
     width: 100%;
     text-align: center;

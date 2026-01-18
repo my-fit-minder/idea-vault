@@ -6,6 +6,8 @@ import express from "express";
 import cors from "cors";
 import "express-async-errors";
 import { ideasRouter } from "./routes/ideas.js";
+import { usersRouter } from "./routes/users.js";
+import { statsRouter } from "./routes/stats.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 
 const app = express();
@@ -27,6 +29,8 @@ app.get("/health", (req, res) => {
 
 // Routes
 app.use("/api/ideas", ideasRouter);
+app.use("/api/users", usersRouter);
+app.use("/api/stats", statsRouter);
 
 // Error handling
 app.use(errorHandler);

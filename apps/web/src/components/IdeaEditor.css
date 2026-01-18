@@ -108,6 +108,12 @@
   color: #a0aec0;
 }
 
+.tag-count {
+  color: #718096;
+  font-size: 13px;
+  font-weight: 400;
+}
+
 .tags-input-container {
   display: flex;
   gap: 8px;
@@ -115,6 +121,12 @@
 
 .tags-input-container input {
   flex: 1;
+}
+
+.tags-input-container input:disabled {
+  background: #f7fafc;
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 .add-tag-button {
@@ -128,9 +140,14 @@
   transition: all 0.2s;
 }
 
-.add-tag-button:hover {
+.add-tag-button:hover:not(:disabled) {
   background: #edf2f7;
   border-color: #cbd5e0;
+}
+
+.add-tag-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .tags-list {

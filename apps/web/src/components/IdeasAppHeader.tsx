@@ -1,19 +1,22 @@
 import { useNavigate } from 'react-router-dom';
+import { Settings } from 'lucide-react';
 import { useAuthStore } from '../lib/authStore';
 import './IdeasApp.css';
 
 export function IdeasAppHeader() {
-  const { user, signOut } = useAuthStore();
+  const { signOut } = useAuthStore();
   const navigate = useNavigate();
 
   const handleGoHome = () => {
     void navigate('/');
   };
 
+  const handleSettings = () => {
+    void navigate('/settings');
+  };
+
   const handleSignOut = () => {
-    if (confirm('Are you sure you want to sign out?')) {
-      void signOut();
-    }
+    void signOut();
   };
 
   return (
@@ -26,9 +29,10 @@ export function IdeasAppHeader() {
           <button onClick={handleGoHome} className="home-button" title="Go to home">
             🏠 Home
           </button>
-          <div className="user-info">
-            <span>{user?.email}</span>
-          </div>
+          <button onClick={handleSettings} className="settings-button" title="Settings">
+            <Settings size={18} />
+            <span>Settings</span>
+          </button>
           <button 
             onClick={handleSignOut} 
             className="sign-out-button"

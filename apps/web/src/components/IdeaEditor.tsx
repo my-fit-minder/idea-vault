@@ -78,10 +78,26 @@ export function IdeaEditor({ idea, onSave, onCancel }: IdeaEditorProps) {
 
   const handleAddTag = () => {
     const tag = tagInput.trim();
-    if (tag && !tags.includes(tag)) {
-      setTags([...tags, tag]);
-      setTagInput("");
+    if (!tag) return;
+    
+    if (tag.length > 15) {
+      setError("Tag must be 15 characters or less");
+      return;
     }
+    
+    if (tags.includes(tag)) {
+      setError("Tag already exists");
+      return;
+    }
+    
+    if (tags.length >= 4) {
+      setError("Maximum 4 tags allowed");
+      return;
+    }
+    
+    setTags([...tags, tag]);
+    setTagInput("");
+    setError(null);
   };
 
   const handleRemoveTag = (tagToRemove: string) => {
@@ -171,7 +187,7 @@ export function IdeaEditor({ idea, onSave, onCancel }: IdeaEditorProps) {
           </div>
 
           <div className="form-group">
-            <label htmlFor="tags">Tags</label>
+            <label htmlFor="tags">Tags {tags.length > 0 && <span className="tag-count">({tags.length}/4)</span>}</label>
             <div className="tags-input-container">
               <input
                 id="tags"
@@ -179,12 +195,15 @@ export function IdeaEditor({ idea, onSave, onCancel }: IdeaEditorProps) {
                 value={tagInput}
                 onChange={(e) => setTagInput(e.target.value)}
                 onKeyDown={handleTagInputKeyDown}
-                placeholder="Add a tag and press Enter"
+                placeholder={tags.length >= 4 ? "Maximum 4 tags reached" : "Add a tag (max 15 chars) and press Enter"}
+                maxLength={15}
+                disabled={tags.length >= 4}
               />
               <button
                 type="button"
                 onClick={handleAddTag}
                 className="add-tag-button"
+                disabled={tags.length >= 4}
               >
                 Add
               </button>

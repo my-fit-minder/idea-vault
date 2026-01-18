@@ -1,0 +1,390 @@
+.settings-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: calc(100vh - 80px);
+  padding: 24px;
+}
+
+.settings-loading {
+  text-align: center;
+  padding: 60px 20px;
+  color: #718096;
+}
+
+.settings-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 600px;
+  padding: 32px;
+}
+
+.settings-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.settings-header h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a202c;
+}
+
+.back-button {
+  background: #f7fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #4a5568;
+  transition: all 0.2s;
+}
+
+.back-button:hover {
+  background: #edf2f7;
+  border-color: #cbd5e0;
+  transform: translateY(-1px);
+}
+
+.settings-error {
+  padding: 16px;
+  background: #fed7d7;
+  color: #c53030;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  border: 1px solid #fc8181;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.settings-error span {
+  flex: 1;
+}
+
+.error-close-button {
+  background: none;
+  border: none;
+  color: #c53030;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.error-close-button:hover {
+  background: rgba(197, 48, 48, 0.2);
+}
+
+.settings-success {
+  padding: 16px;
+  background: #c6f6d5;
+  color: #22543d;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  border: 1px solid #68d391;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.settings-success span {
+  flex: 1;
+}
+
+.success-close-button {
+  background: none;
+  border: none;
+  color: #22543d;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.success-close-button:hover {
+  background: rgba(34, 84, 61, 0.2);
+}
+
+.settings-content {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.settings-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.section-error,
+.section-success {
+  margin-bottom: 0;
+}
+
+.settings-section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.settings-section-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #1a202c;
+}
+
+.settings-section-header svg {
+  color: #667eea;
+}
+
+.settings-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #4a5568;
+}
+
+.form-input {
+  padding: 12px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.2s;
+  font-family: inherit;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.form-input:disabled {
+  background: #f7fafc;
+  cursor: not-allowed;
+  opacity: 0.7;
+  color: #4a5568;
+}
+
+.form-help-text {
+  margin: 4px 0 0 0;
+  font-size: 12px;
+  color: #718096;
+  font-style: italic;
+}
+
+.username-status {
+  margin-top: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 6px 10px;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+.username-status.available {
+  color: #22543d;
+  background: #c6f6d5;
+  border: 1px solid #68d391;
+}
+
+.username-status.taken {
+  color: #c53030;
+  background: #fed7d7;
+  border: 1px solid #fc8181;
+}
+
+.username-status.checking {
+  color: #667eea;
+  background: #e6f0ff;
+  border: 1px solid #a0b8ff;
+}
+
+.password-match-status {
+  margin-top: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 6px 10px;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+.password-match-status.match {
+  color: #22543d;
+  background: #c6f6d5;
+  border: 1px solid #68d391;
+}
+
+.password-match-status.no-match {
+  color: #c53030;
+  background: #fed7d7;
+  border: 1px solid #fc8181;
+}
+
+.save-button {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
+}
+
+.save-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  background: linear-gradient(135deg, #7c8ef0 0%, #8a5fb8 100%);
+}
+
+.save-button:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
+}
+
+.save-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .settings-container {
+    padding: 16px;
+  }
+
+  .settings-card {
+    padding: 24px 20px;
+  }
+
+  .settings-header {
+    padding-bottom: 16px;
+    margin-bottom: 24px;
+  }
+
+  .settings-header h1 {
+    font-size: 24px;
+  }
+
+  .settings-content {
+    gap: 24px;
+  }
+
+  .settings-section {
+    gap: 16px;
+  }
+
+  .settings-section-header h2 {
+    font-size: 18px;
+  }
+
+  .form-input {
+    font-size: 16px; /* Prevents zoom on iOS */
+    padding: 14px 16px;
+  }
+
+  .save-button {
+    padding: 14px 24px;
+    font-size: 15px;
+  }
+}
+
+/* Small mobile */
+@media (max-width: 480px) {
+  .settings-container {
+    padding: 12px;
+  }
+
+  .settings-card {
+    padding: 20px 16px;
+  }
+
+  .settings-header {
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .settings-header h1 {
+    font-size: 22px;
+  }
+
+  .settings-content {
+    gap: 20px;
+  }
+
+  .settings-section-header {
+    gap: 10px;
+  }
+
+  .settings-section-header h2 {
+    font-size: 16px;
+  }
+
+  .form-group {
+    gap: 6px;
+  }
+
+  .form-group label {
+    font-size: 13px;
+  }
+
+  .form-input {
+    padding: 12px 14px;
+    font-size: 15px;
+  }
+
+  .save-button {
+    padding: 12px 20px;
+    font-size: 14px;
+  }
+}

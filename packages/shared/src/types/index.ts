@@ -44,3 +44,21 @@ export interface UpdateIdeaInput {
   archived?: boolean;
   deleted?: boolean;
 }
+
+// Pagination types
+export interface PaginationParams {
+  limit?: number;
+  offset?: number;
+  archived?: boolean; // Filter by archived status (true = archived, false = active, undefined = both)
+  search?: string; // Search query to filter ideas by title, content, or tags
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  pagination: {
+    limit: number;
+    offset: number;
+    total: number;
+    hasMore: boolean;
+  };
+}

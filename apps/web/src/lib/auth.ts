@@ -29,9 +29,18 @@ export async function signIn(credentials: SignInCredentials) {
 }
 
 export async function signUp(credentials: SignUpCredentials) {
+  // Generate a random username
+  const { generateRandomUsername } = await import('./username');
+  const username = generateRandomUsername();
+
   const { data, error } = await supabase.auth.signUp({
     email: credentials.email,
     password: credentials.password,
+    options: {
+      data: {
+        username: username,
+      },
+    },
   });
 
   if (error) {

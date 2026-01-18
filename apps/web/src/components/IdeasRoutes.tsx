@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate, useParams, useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Loader2 } from 'lucide-react';
 import { syncService } from '../lib/syncService';
 import type { Idea } from '@idea-vault/shared';
@@ -7,42 +7,162 @@ import { IdeasList } from './IdeasList';
 import { IdeaEditor } from './IdeaEditor';
 import { IdeaDetail } from './IdeaDetail';
 import { IdeasAppHeader } from './IdeasAppHeader';
+import { Settings } from './Settings';
 import './IdeasApp.css';
+
+const PAGE_SIZE = 20;
 
 function IdeasListPage() {
   const [ideas, setIdeas] = useState<Idea[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [filters, setFilters] = useState({
+    showActive: true,
+    showArchived: false,
+  });
+  const [hasMore, setHasMore] = useState(true);
+  const offsetRef = useRef(0);
   const navigate = useNavigate();
+  const observerTarget = useRef<HTMLDivElement>(null);
 
-  const loadIdeas = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await syncService.getIdeas();
-      setIdeas(data);
-    } catch (err: any) {
-      setError(err.message || 'Failed to load ideas');
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Debounce search query to avoid too many API calls
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
 
   useEffect(() => {
-    loadIdeas();
-  }, []);
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 300); // 300ms debounce
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  const loadIdeas = useCallback(async (reset = false) => {
+    try {
+      if (reset) {
+        setLoading(true);
+        offsetRef.current = 0;
+        setIdeas([]);
+      } else {
+        setLoadingMore(true);
+      }
+      setError(null);
+
+      const offsetToUse = reset ? 0 : offsetRef.current;
+      
+      // If both filters are off, show nothing
+      if (!filters.showActive && !filters.showArchived) {
+        setIdeas([]);
+        setHasMore(false);
+        setLoading(false);
+        setLoadingMore(false);
+        return;
+      }
+      
+      // Determine archived filter based on filter state
+      // If both are true, fetch all (archived = undefined)
+      // If only showActive is true, fetch active (archived = false)
+      // If only showArchived is true, fetch archived (archived = true)
+      let archived: boolean | undefined;
+      if (filters.showActive && !filters.showArchived) {
+        archived = false;
+      } else if (!filters.showActive && filters.showArchived) {
+        archived = true;
+      } else {
+        // Both true - fetch all
+        archived = undefined;
+      }
+      
+      // Fetch ideas with pagination
+      // TypeScript has trouble resolving the return type from syncService, but the runtime type is correct
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const response = await syncService.getIdeasPaginated({
+        limit: PAGE_SIZE,
+        offset: offsetToUse,
+        archived,
+        search: debouncedSearchQuery.trim().length > 0 ? debouncedSearchQuery.trim() : undefined,
+      });
+      
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      const newIdeas: Idea[] = Array.isArray(response.data) ? (response.data as Idea[]) : [];
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+      const pagination = response.pagination;
+
+      // Deduplicate ideas by ID to prevent showing the same idea twice
+      const uniqueNewIdeas: Idea[] = Array.from(
+        new Map(newIdeas.map((idea: Idea) => [idea.id, idea])).values()
+      );
+
+      if (reset) {
+        setIdeas(uniqueNewIdeas);
+      } else {
+        // Deduplicate against existing ideas
+        setIdeas((prev) => {
+          const existingIds = new Set(prev.map((idea) => idea.id));
+          const filteredNewIdeas = uniqueNewIdeas.filter((idea: Idea) => !existingIds.has(idea.id));
+          return [...prev, ...filteredNewIdeas];
+        });
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      setHasMore(pagination.hasMore as boolean);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      offsetRef.current = (pagination.offset as number) + (pagination.limit as number);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to load ideas';
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
+    }
+  }, [filters.showActive, filters.showArchived, debouncedSearchQuery]);
+
+  // Load more ideas when scrolling to bottom
+  const loadMore = useCallback(() => {
+    if (!loadingMore && hasMore && !loading) {
+      void loadIdeas(false);
+    }
+  }, [loadingMore, hasMore, loading, loadIdeas]);
+
+  // Intersection Observer for infinite scroll
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting && hasMore && !loadingMore && !loading) {
+          void loadMore();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    const currentTarget = observerTarget.current;
+    if (currentTarget) {
+      observer.observe(currentTarget);
+    }
+
+    return () => {
+      if (currentTarget) {
+        observer.unobserve(currentTarget);
+      }
+    };
+  }, [hasMore, loadingMore, loading, loadMore]);
+
+  // Initial load and reload when filters or search change
+  useEffect(() => {
+    void loadIdeas(true);
+  }, [loadIdeas]);
 
   const handleCreate = () => {
-    navigate('/ideas/new');
+    void navigate('/ideas/new');
   };
 
   const handleEdit = (idea: Idea) => {
-    navigate(`/ideas/${idea.id}/edit`);
+    void navigate(`/ideas/${idea.id}/edit`);
   };
 
   const handleView = (idea: Idea) => {
-    navigate(`/ideas/${idea.id}`);
+    void navigate(`/ideas/${idea.id}`);
   };
 
   const handleDelete = async (id: string) => {
@@ -51,48 +171,54 @@ function IdeasListPage() {
     }
 
     try {
+       
       await syncService.deleteIdea(id);
-      await loadIdeas();
-    } catch (err: any) {
-      alert(err.message || 'Failed to delete idea');
+      await loadIdeas(true);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to delete idea';
+      alert(errorMessage);
     }
   };
 
-  const filteredIdeas = ideas.filter((idea) => {
-    if (!searchQuery) return true;
-    const query = searchQuery.toLowerCase();
-    return (
-      idea.title.toLowerCase().includes(query) ||
-      idea.content?.toLowerCase().includes(query) ||
-      idea.tags.some((tag) => tag.toLowerCase().includes(query))
-    );
-  });
-
+  // Search is now handled at the API level, no client-side filtering needed
   return (
-    <IdeasList
-      ideas={filteredIdeas}
-      loading={loading}
-      error={error}
-      searchQuery={searchQuery}
-      onSearchChange={setSearchQuery}
-      onCreate={handleCreate}
-      onEdit={handleEdit}
-      onView={handleView}
-      onDelete={handleDelete}
-      onRefresh={loadIdeas}
-    />
+    <>
+      <IdeasList
+        ideas={ideas}
+        loading={loading}
+        loadingMore={loadingMore}
+        error={error}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        filters={filters}
+        onFiltersChange={setFilters}
+        onCreate={handleCreate}
+        onEdit={handleEdit}
+        onView={handleView}
+        onDelete={(id: string) => {
+          void handleDelete(id);
+        }}
+        onRefresh={() => {
+          void loadIdeas(true);
+        }}
+      />
+      {/* Sentinel element for infinite scroll */}
+      {hasMore && !loading && (
+        <div ref={observerTarget} style={{ height: '20px', width: '100%' }} />
+      )}
+    </>
   );
 }
 
 function CreateIdeaPage() {
   const navigate = useNavigate();
 
-  const handleSave = async () => {
-    navigate('/');
+  const handleSave = () => {
+    void navigate('/');
   };
 
   const handleCancel = () => {
-    navigate('/');
+    void navigate('/');
   };
 
   return <IdeaEditor onSave={handleSave} onCancel={handleCancel} />;
@@ -107,36 +233,39 @@ function EditIdeaPage() {
   useEffect(() => {
     const loadIdea = async () => {
       if (!id) {
-        navigate('/');
+        void navigate('/');
         return;
       }
 
       try {
         setLoading(true);
+         
         const ideas = await syncService.getIdeas();
-        const foundIdea = ideas.find(i => i.id === id);
+         
+        const foundIdea = ideas.find((i: Idea) => i.id === id);
         if (foundIdea) {
+           
           setIdea(foundIdea);
         } else {
-          navigate('/');
+          void navigate('/');
         }
       } catch (err) {
         console.error('Failed to load idea:', err);
-        navigate('/');
+        void navigate('/');
       } finally {
         setLoading(false);
       }
     };
 
-    loadIdea();
+    void loadIdea();
   }, [id, navigate]);
 
-  const handleSave = async () => {
-    navigate(`/ideas/${id}`);
+  const handleSave = () => {
+    void navigate(`/ideas/${id}`);
   };
 
   const handleCancel = () => {
-    navigate(`/ideas/${id}`);
+    void navigate(`/ideas/${id}`);
   };
 
   if (loading) {
@@ -151,7 +280,7 @@ function EditIdeaPage() {
     return null;
   }
 
-  return <IdeaEditor idea={idea} onSave={handleSave} onCancel={handleCancel} />;
+  return <IdeaEditor idea={idea} onSave={() => { void handleSave(); }} onCancel={handleCancel} />;
 }
 
 function ViewIdeaPage() {
@@ -160,35 +289,81 @@ function ViewIdeaPage() {
   const [idea, setIdea] = useState<Idea | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const loadIdea = async () => {
-      if (!id) {
-        navigate('/');
-        return;
-      }
+  // Load idea function (memoized to avoid dependency issues)
+  const loadIdea = useCallback(async () => {
+    if (!id) {
+      void navigate('/');
+      return null;
+    }
 
-      try {
-        setLoading(true);
-        const ideas = await syncService.getIdeas();
-        const foundIdea = ideas.find(i => i.id === id);
-        if (foundIdea) {
-          setIdea(foundIdea);
-        } else {
-          navigate('/');
-        }
-      } catch (err) {
-        console.error('Failed to load idea:', err);
-        navigate('/');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadIdea();
+    try {
+      const { apiClient } = await import('../lib/apiClient');
+       
+      const loadedIdea = await apiClient.ideas.getById(id);
+       
+      setIdea(loadedIdea);
+      return loadedIdea;
+    } catch (err) {
+      console.error('Failed to load idea:', err);
+      void navigate('/');
+      return null;
+    }
   }, [id, navigate]);
 
+  useEffect(() => {
+    const initialLoad = async () => {
+      setLoading(true);
+      await loadIdea();
+      setLoading(false);
+    };
+
+    void initialLoad();
+  }, [loadIdea]);
+
+  // Poll for report updates if idea exists but has no report
+  useEffect(() => {
+    if (!idea || !id || idea.ai_report) {
+      return; // Don't poll if idea has a report or doesn't exist
+    }
+
+    // Check if idea was created recently (within last 2 minutes)
+    const createdAt = new Date(idea.created_at).getTime();
+    const now = Date.now();
+    const twoMinutesAgo = now - 2 * 60 * 1000;
+
+    // Only poll if idea was created recently (likely still generating)
+    if (createdAt < twoMinutesAgo) {
+      return;
+    }
+
+    // Poll every 3 seconds for up to 60 seconds
+    let pollCount = 0;
+    const maxPolls = 20; // 20 polls * 3 seconds = 60 seconds max
+    const pollInterval = 3000; // 3 seconds
+
+    const pollTimer = setInterval(async () => {
+      pollCount++;
+      
+      try {
+        const updatedIdea = await loadIdea();
+        // Stop polling if report is now available or max polls reached
+        if (updatedIdea?.ai_report || pollCount >= maxPolls) {
+          clearInterval(pollTimer);
+        }
+      } catch (err) {
+        console.error('Error polling for report:', err);
+        clearInterval(pollTimer);
+      }
+    }, pollInterval);
+
+    // Cleanup on unmount or when idea changes
+    return () => {
+      clearInterval(pollTimer);
+    };
+  }, [idea, id, loadIdea]);
+
   const handleEdit = () => {
-    navigate(`/ideas/${id}/edit`);
+    void navigate(`/ideas/${id}/edit`);
   };
 
   const handleDelete = async () => {
@@ -199,15 +374,17 @@ function ViewIdeaPage() {
     }
 
     try {
+       
       await syncService.deleteIdea(id);
-      navigate('/');
-    } catch (err: any) {
-      alert(err.message || 'Failed to delete idea');
+      void navigate('/');
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to delete idea';
+      alert(errorMessage);
     }
   };
 
   const handleClose = () => {
-    navigate('/');
+    void navigate('/');
   };
 
   const handleArchive = async () => {
@@ -215,29 +392,36 @@ function ViewIdeaPage() {
 
     try {
       const { apiClient } = await import('../lib/apiClient');
+       
       const updatedIdea = await apiClient.ideas.archive(id);
       setIdea(updatedIdea);
       
       // Also reload ideas list in background
+       
       await syncService.getIdeas();
-    } catch (err: any) {
-      alert(err.message || 'Failed to archive idea');
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to archive idea';
+      alert(errorMessage);
     }
   };
 
   const handleRegenerateAI = async (ideaToRegenerate: Idea) => {
     try {
       const { apiClient } = await import('../lib/apiClient');
-      const result = await apiClient.ideas.generateReport(ideaToRegenerate.id);
+      await apiClient.ideas.generateReport(ideaToRegenerate.id);
       
       // Reload the idea
+       
       const ideas = await syncService.getIdeas();
-      const updatedIdea = ideas.find(i => i.id === ideaToRegenerate.id);
+       
+      const updatedIdea = ideas.find((i: Idea) => i.id === ideaToRegenerate.id);
       if (updatedIdea) {
+         
         setIdea(updatedIdea);
       }
-    } catch (error: any) {
-      alert(error.message || 'Failed to generate AI report');
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to generate AI report';
+      alert(errorMessage);
     }
   };
 
@@ -253,14 +437,26 @@ function ViewIdeaPage() {
     return null;
   }
 
+  // Determine if report is being generated
+  // Show loading if: no report exists AND idea was created recently (within 2 minutes)
+  const createdAt = new Date(idea.created_at).getTime();
+  const now = Date.now();
+  const twoMinutesAgo = now - 2 * 60 * 1000;
+  const isGeneratingReport = !idea.ai_report && createdAt >= twoMinutesAgo;
+
   return (
     <IdeaDetail
       idea={idea}
       onEdit={handleEdit}
-      onDelete={handleDelete}
-      onArchive={handleArchive}
+      onDelete={() => {
+        void handleDelete();
+      }}
+      onArchive={() => {
+        void handleArchive();
+      }}
       onClose={handleClose}
       onRegenerate={handleRegenerateAI}
+      isGeneratingReport={isGeneratingReport}
     />
   );
 }
@@ -275,6 +471,7 @@ export function IdeasRoutes() {
           <Route path="ideas/new" element={<CreateIdeaPage />} />
           <Route path="ideas/:id" element={<ViewIdeaPage />} />
           <Route path="ideas/:id/edit" element={<EditIdeaPage />} />
+          <Route path="settings" element={<Settings />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>

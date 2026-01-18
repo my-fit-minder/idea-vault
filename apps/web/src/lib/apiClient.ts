@@ -1,5 +1,5 @@
 // API client for web app
-import type { Idea, CreateIdeaInput, UpdateIdeaInput } from '@idea-vault/shared';
+import type { Idea, CreateIdeaInput, UpdateIdeaInput, PaginationParams, PaginatedResponse } from '@idea-vault/shared';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
@@ -62,8 +62,33 @@ async function request<T>(
 
 export const apiClient = {
   ideas: {
-    getAll: (): Promise<Idea[]> => {
-      return request<Idea[]>('/api/ideas');
+    getAll: (archived?: boolean): Promise<Idea[]> => {
+      const queryParams = new URLSearchParams();
+      if (archived !== undefined) {
+        queryParams.append('archived', archived.toString());
+      }
+      const queryString = queryParams.toString();
+      const url = `/api/ideas${queryString ? `?${queryString}` : ''}`;
+      return request<Idea[]>(url);
+    },
+
+    getAllPaginated: (params?: PaginationParams): Promise<PaginatedResponse<Idea>> => {
+      const queryParams = new URLSearchParams();
+      if (params?.limit !== undefined) {
+        queryParams.append('limit', params.limit.toString());
+      }
+      if (params?.offset !== undefined) {
+        queryParams.append('offset', params.offset.toString());
+      }
+      if (params?.archived !== undefined) {
+        queryParams.append('archived', params.archived.toString());
+      }
+      if (params?.search !== undefined && params.search.trim().length > 0) {
+        queryParams.append('search', params.search.trim());
+      }
+      const queryString = queryParams.toString();
+      const url = `/api/ideas${queryString ? `?${queryString}` : ''}`;
+      return request<PaginatedResponse<Idea>>(url);
     },
 
     getById: (id: string): Promise<Idea> => {
@@ -100,6 +125,11 @@ export const apiClient = {
       return request<{ report: string; idea: Idea }>(`/api/ideas/${id}/generate-report`, {
         method: 'POST',
       });
+    },
+  },
+  users: {
+    checkUsername: (username: string): Promise<{ available: boolean }> => {
+      return request<{ available: boolean }>(`/api/users/check-username/${encodeURIComponent(username)}`);
     },
   },
 };

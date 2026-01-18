@@ -6,3 +6,6 @@ api:
 
 mobile:
 	cd apps/mobile && npm start
+
+landing:
+	cd apps/landing && npm run dev

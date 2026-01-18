@@ -16,4 +16,6 @@ export type {
   AuthState,
   CreateIdeaInput,
   UpdateIdeaInput,
+  PaginationParams,
+  PaginatedResponse,
 } from './types';

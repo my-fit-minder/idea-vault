@@ -10,6 +10,11 @@ import './IdeasApp.css';
 
 type View = 'list' | 'create' | 'edit' | 'detail';
 
+interface FilterState {
+  showActive: boolean;
+  showArchived: boolean;
+}
+
 export function IdeasApp() {
   const { user, signOut } = useAuthStore();
   const [ideas, setIdeas] = useState<Idea[]>([]);
@@ -17,12 +22,36 @@ export function IdeasApp() {
   const [view, setView] = useState<View>('list');
   const [selectedIdea, setSelectedIdea] = useState<Idea | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [filters, setFilters] = useState<FilterState>({
+    showActive: true,
+    showArchived: false,
+  });
 
   const loadIdeas = async (): Promise<void> => {
     setLoading(true);
     try {
+      // If both filters are off, show nothing
+      if (!filters.showActive && !filters.showArchived) {
+        setIdeas([]);
+        return;
+      }
+      
+      // Determine archived filter based on filter state
+      // If both are true, fetch all (archived = undefined)
+      // If only showActive is true, fetch active (archived = false)
+      // If only showArchived is true, fetch archived (archived = true)
+      let archived: boolean | undefined;
+      if (filters.showActive && !filters.showArchived) {
+        archived = false;
+      } else if (!filters.showActive && filters.showArchived) {
+        archived = true;
+      } else {
+        // Both true - fetch all
+        archived = undefined;
+      }
+      
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
-      const data = await syncService.getIdeas();
+      const data = await syncService.getIdeas(archived);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       setIdeas(data);
     } catch {
@@ -34,7 +63,7 @@ export function IdeasApp() {
 
   useEffect(() => {
     void loadIdeas();
-  }, []);
+  }, [filters.showActive, filters.showArchived]);
 
   const handleCreate = () => {
     setSelectedIdea(null);
@@ -118,6 +147,7 @@ export function IdeasApp() {
     setSelectedIdea(null);
   };
 
+  // Only filter by search query - archived/active filtering is done on the backend
   const filteredIdeas = ideas.filter((idea) => {
     if (!searchQuery) return true;
     const query = searchQuery.toLowerCase();
@@ -157,9 +187,7 @@ export function IdeasApp() {
             </div>
             <button 
               onClick={() => {
-                if (confirm('Are you sure you want to sign out?')) {
-                  void signOut();
-                }
+                void signOut();
               }} 
               className="sign-out-button"
             >
@@ -177,6 +205,8 @@ export function IdeasApp() {
             error={null}
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
+            filters={filters}
+            onFiltersChange={setFilters}
             onCreate={handleCreate}
             onEdit={handleEdit}
             onView={handleView}

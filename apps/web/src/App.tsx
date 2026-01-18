@@ -4,6 +4,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthStore } from './lib/authStore';
 import { AuthPage } from './components/AuthPage';
 import { IdeasRoutes } from './components/IdeasRoutes';
+import { PrivacyPolicy } from './components/PrivacyPolicy';
 import './App.css';
 
 function App() {
@@ -47,6 +48,7 @@ function App() {
 
   return (
     <Routes>
+      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       {!user ? (
         <Route path="*" element={<AuthPage />} />
       ) : (

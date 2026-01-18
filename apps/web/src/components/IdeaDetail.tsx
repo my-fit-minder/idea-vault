@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
-import { ChevronLeft, MoreVertical, Edit, Archive, ArchiveRestore, Trash2, ChevronDown, ChevronRight, Sparkles, RefreshCw } from 'lucide-react';
+import { ChevronLeft, MoreVertical, Edit, Archive, ArchiveRestore, Trash2, ChevronDown, ChevronRight, Sparkles, RefreshCw, Loader2 } from 'lucide-react';
 import { type Idea } from '@idea-vault/shared';
 import { DropdownMenu, DropdownMenuItem } from './DropdownMenu';
 import './IdeaDetail.css';
@@ -13,9 +13,10 @@ interface IdeaDetailProps {
   onArchive: () => void;
   onClose: () => void;
   onRegenerate?: (idea: Idea) => Promise<void>;
+  isGeneratingReport?: boolean;
 }
 
-export function IdeaDetail({ idea, onEdit, onDelete, onArchive, onRegenerate }: IdeaDetailProps) {
+export function IdeaDetail({ idea, onEdit, onDelete, onArchive, onRegenerate, isGeneratingReport = false }: IdeaDetailProps) {
   const navigate = useNavigate();
   const [regenerating, setRegenerating] = useState(false);
   const [isReportExpanded, setIsReportExpanded] = useState(true);
@@ -128,6 +129,20 @@ export function IdeaDetail({ idea, onEdit, onDelete, onArchive, onRegenerate }: 
           </div>
         )}
 
+        {/* Show loading state when report is being generated */}
+        {isGeneratingReport && !idea.ai_report && (
+          <div className="detail-content ai-report-generating">
+            <div className="report-generating-content">
+              <Loader2 className="spinner" size={24} />
+              <div className="report-generating-text">
+                <h3>Generating AI Report</h3>
+                <p>Our AI is analyzing your idea and creating a comprehensive report. This usually takes a few seconds...</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Show report when it's available */}
         {idea.ai_report && (
           <div className="detail-content ai-report">
             <div className="report-header">
