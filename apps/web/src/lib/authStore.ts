@@ -64,7 +64,24 @@ export const useAuthStore = create<AuthStore>((set) => ({
       });
 
       // Listen for auth changes
-      supabase.auth.onAuthStateChange((_event, session) => {
+      supabase.auth.onAuthStateChange(async (event, session) => {
+        // Generate username for new OAuth users (e.g., Google sign-in)
+        if (event === 'SIGNED_IN' && session?.user) {
+          const username = session.user.user_metadata?.username;
+          if (!username) {
+            try {
+              const { generateRandomUsername } = await import('./username');
+              const newUsername = generateRandomUsername();
+              await supabase.auth.updateUser({
+                data: { username: newUsername }
+              });
+            } catch (error) {
+              console.error('Failed to generate username for OAuth user:', error);
+              // Don't block auth - username can be set later in Settings
+            }
+          }
+        }
+
         set({
           session,
           user: session?.user ? { id: session.user.id, email: session.user.email } : null,
