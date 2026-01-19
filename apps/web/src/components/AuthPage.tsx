@@ -1,10 +1,15 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../lib/authStore';
-import { signIn, signUp, signInWithGoogle } from '../lib/auth';
+import { signIn, signUp, signInWithGoogle, resetPassword, updatePassword } from '../lib/auth';
+import { supabase } from '../lib/supabase';
 import './AuthPage.css';
 
-export function AuthPage() {
+interface AuthPageProps {
+  hasRecoveryToken?: boolean;
+}
+
+export function AuthPage({ hasRecoveryToken }: AuthPageProps) {
   const navigate = useNavigate();
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');
@@ -14,6 +19,49 @@ export function AuthPage() {
   const [loading, setLoading] = useState(false);
   const [showEmailConfirmation, setShowEmailConfirmation] = useState(false);
   const [signupEmail, setSignupEmail] = useState('');
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [forgotPasswordEmail, setForgotPasswordEmail] = useState('');
+  const [forgotPasswordSent, setForgotPasswordSent] = useState(false);
+  const [showResetPassword, setShowResetPassword] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordResetSuccess, setPasswordResetSuccess] = useState(false);
+
+  // Check for password reset - either from URL hash or if user has a recovery session
+  useEffect(() => {
+    // Check if we detected a recovery token in the URL
+    if (hasRecoveryToken) {
+      // Let Supabase process it first, then check for session
+      const checkRecoverySession = async () => {
+        // Wait a bit for Supabase to process the hash
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        // If we have a session and it's from recovery, show password reset form
+        if (session) {
+          setShowResetPassword(true);
+          // Clear the hash after processing
+          window.history.replaceState(null, '', window.location.pathname);
+        } else {
+          // No session yet, but we have recovery token - show form anyway
+          setShowResetPassword(true);
+        }
+      };
+      
+      void checkRecoverySession();
+      return;
+    }
+
+    // Fallback: check URL hash directly
+    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+    const type = hashParams.get('type');
+
+    if (type === 'recovery') {
+      setShowResetPassword(true);
+      window.history.replaceState(null, '', window.location.pathname);
+    }
+  }, [hasRecoveryToken]);
 
   const handleGoogleSignIn = async () => {
     setError(null);
@@ -25,6 +73,91 @@ export function AuthPage() {
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'An error occurred';
       setError(errorMessage);
+      setLoading(false);
+    }
+  };
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+
+    if (!forgotPasswordEmail) {
+      setError('Please enter your email address');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      await resetPassword(forgotPasswordEmail);
+      setForgotPasswordSent(true);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred';
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePasswordReset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+
+    if (!newPassword || !confirmPassword) {
+      setError('Please enter and confirm your new password');
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      setError('Password must be at least 6 characters long');
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      // Check if we have a recovery session (from URL hash that Supabase processed)
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        throw new Error('No active session. Please request a new password reset link.');
+      }
+
+      // Update the password - if this is a recovery session, Supabase will allow it
+      // If it's a regular session, it will also work
+      const { error: updateError } = await supabase.auth.updateUser({
+        password: newPassword,
+      });
+
+      if (updateError) {
+        console.error('Update password error:', updateError);
+        // If update fails, the token might have expired or session is invalid
+        if (updateError.message.includes('session') || updateError.message.includes('token') || updateError.message.includes('expired') || updateError.message.includes('recovery') || updateError.message.includes('password')) {
+          throw new Error('Unable to reset password. The reset link may have expired. Please request a new password reset.');
+        }
+        throw updateError;
+      }
+
+      setPasswordResetSuccess(true);
+      setNewPassword('');
+      setConfirmPassword('');
+      
+      // Refresh the auth state after password update
+      // Re-fetch session to get the updated one after password change
+      const { data: { session: updatedSession } } = await supabase.auth.getSession();
+      if (updatedSession) {
+        useAuthStore.getState().setSession(updatedSession);
+        useAuthStore.getState().setUser(updatedSession.user ? { id: updatedSession.user.id, email: updatedSession.user.email } : null);
+      }
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred';
+      setError(errorMessage);
+    } finally {
       setLoading(false);
     }
   };
@@ -63,6 +196,180 @@ export function AuthPage() {
       setLoading(false);
     }
   };
+
+  // Show password reset success
+  if (showResetPassword && passwordResetSuccess) {
+    return (
+      <div className="auth-container">
+        <div className="auth-card">
+          <div className="auth-header">
+            <h1>💡 Idea Vault</h1>
+            <p>Password reset successful</p>
+          </div>
+          <div className="email-confirmation-message">
+            <p className="confirmation-text">
+              Your password has been successfully reset!
+            </p>
+            <p className="confirmation-instructions">
+              You can now sign in with your new password.
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                setShowResetPassword(false);
+                setPasswordResetSuccess(false);
+                setError(null);
+              }}
+              className="auth-button"
+            >
+              Sign In
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show password reset form (when user clicks email link)
+  if (showResetPassword) {
+    return (
+      <div className="auth-container">
+        <div className="auth-card">
+          <div className="auth-header">
+            <h1>💡 Idea Vault</h1>
+            <p>Set your new password</p>
+          </div>
+
+          <form onSubmit={handlePasswordReset} className="auth-form">
+            <div className="form-group">
+              <label htmlFor="new-password">New Password</label>
+              <input
+                id="new-password"
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                required
+                placeholder="••••••••"
+                minLength={6}
+                autoFocus
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="confirm-password">Confirm Password</label>
+              <input
+                id="confirm-password"
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+                placeholder="••••••••"
+                minLength={6}
+              />
+            </div>
+
+            {error && <div className="error-message">{error}</div>}
+
+            <button 
+              type="submit" 
+              disabled={loading} 
+              className="auth-button"
+            >
+              {loading ? 'Updating...' : 'Update Password'}
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
+  // Show forgot password sent confirmation
+  if (showForgotPassword && forgotPasswordSent) {
+    return (
+      <div className="auth-container">
+        <div className="auth-card">
+          <div className="auth-header">
+            <h1>💡 Idea Vault</h1>
+            <p>Check your email</p>
+          </div>
+          <div className="email-confirmation-message">
+            <p className="confirmation-text">
+              We've sent a password reset link to <strong>{forgotPasswordEmail}</strong>
+            </p>
+            <p className="confirmation-instructions">
+              Please check your inbox and click the link to reset your password. 
+              The link will expire in 1 hour.
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                setShowForgotPassword(false);
+                setForgotPasswordSent(false);
+                setForgotPasswordEmail('');
+                setError(null);
+              }}
+              className="auth-button"
+            >
+              Back to Sign In
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show forgot password form
+  if (showForgotPassword) {
+    return (
+      <div className="auth-container">
+        <div className="auth-card">
+          <div className="auth-header">
+            <h1>💡 Idea Vault</h1>
+            <p>Reset your password</p>
+          </div>
+
+          <form onSubmit={handleForgotPassword} className="auth-form">
+            <div className="form-group">
+              <label htmlFor="forgot-email">Email</label>
+              <input
+                id="forgot-email"
+                type="email"
+                value={forgotPasswordEmail}
+                onChange={(e) => setForgotPasswordEmail(e.target.value)}
+                required
+                placeholder="you@example.com"
+                autoFocus
+              />
+            </div>
+
+            {error && <div className="error-message">{error}</div>}
+
+            <button 
+              type="submit" 
+              disabled={loading} 
+              className="auth-button"
+            >
+              {loading ? 'Sending...' : 'Send Reset Link'}
+            </button>
+          </form>
+
+          <div className="auth-footer">
+            <button
+              type="button"
+              onClick={() => {
+                setShowForgotPassword(false);
+                setForgotPasswordEmail('');
+                setError(null);
+              }}
+              className="toggle-auth"
+            >
+              Back to Sign In
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Show email confirmation message if signup was successful
   if (showEmailConfirmation) {
@@ -151,7 +458,21 @@ export function AuthPage() {
           </div>
 
           <div className="form-group">
-            <label htmlFor="password">Password</label>
+            <div className="password-label-row">
+              <label htmlFor="password">Password</label>
+              {!isSignUp && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowForgotPassword(true);
+                    setError(null);
+                  }}
+                  className="forgot-password-link"
+                >
+                  Forgot password?
+                </button>
+              )}
+            </div>
             <input
               id="password"
               type="password"

@@ -47,15 +47,17 @@ export const useAuthStore = create<AuthStore>((set) => ({
         return;
       }
 
-      // Get initial session
-      const { data: { session }, error } = await supabase.auth.getSession();
+      // Get initial session - Supabase will process recovery tokens automatically
+      // if detectSessionInUrl is true (which it is)
+      const { data, error } = await supabase.auth.getSession();
       
+      let session = null;
       if (error) {
         console.error('Error getting session:', error);
-        set({ user: null, session: null, loading: false, initialized: true });
-        return;
+      } else {
+        session = data.session;
       }
-
+      
       set({
         session,
         user: session?.user ? { id: session.user.id, email: session.user.email } : null,
