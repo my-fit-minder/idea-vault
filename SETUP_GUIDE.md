@@ -16,7 +16,17 @@ Complete setup instructions for running the Idea Vault application.
      - `anon` public key
      - `service_role` key (keep this secret!)
 
-3. **Run Database Migration**
+3. **Configure Google OAuth (Optional but Recommended)**
+   - Go to Project Settings → Authentication → Providers
+   - Enable the "Google" provider
+   - You'll need to:
+     - Create a Google OAuth application at https://console.cloud.google.com/apis/credentials
+     - Add your Supabase redirect URL: `https://your-project.supabase.co/auth/v1/callback`
+     - Copy the Client ID and Client Secret from Google
+     - Paste them into Supabase's Google provider settings
+   - Save the configuration
+
+4. **Run Database Migration**
    ```bash
    # Install Supabase CLI (if not installed)
    npm install -g supabase
