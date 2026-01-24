@@ -1,50 +1,176 @@
-# Welcome to your Expo app 👋
+# Idea Vault Mobile App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A React Native mobile app for managing your startup ideas with **full offline support**. Built with Expo and designed following iOS and Android guidelines.
 
-## Get started
+## Features
 
-1. Install dependencies
+- 📱 **Native iOS & Android experience** - Follows platform design guidelines
+- 🔐 **Authentication** - Email/password and Google OAuth sign-in
+- 💡 **Ideas Management** - Create, edit, view, archive, and delete ideas
+- 🏷️ **Tags & Search** - Organize ideas with tags (max 4) and search functionality
+- 🤖 **AI Reports** - Generate AI-powered startup idea analysis reports
+- 📴 **Offline Support** - Full offline functionality with automatic sync
+- 🔄 **Auto Sync** - Changes sync automatically when back online
+- 🌙 **Dark Mode** - Automatic dark/light mode based on system settings
 
-   ```bash
-   npm install
-   ```
+## Offline Support
 
-2. Start the app
+The app works completely offline:
 
-   ```bash
-   npx expo start
-   ```
+1. **Create ideas offline** - New ideas are saved locally with a `local-` prefix
+2. **Edit ideas offline** - Changes are queued for sync
+3. **Delete ideas offline** - Deletions are queued and applied when online
+4. **Automatic sync** - When network is restored, all pending changes sync automatically
+5. **Sync queue** - View pending operations in Settings
 
-In the output, you'll find options to open the app in a
+### How Offline Sync Works
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```
+┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│   User Action   │ --> │  Local Storage  │ --> │   Sync Queue    │
+└─────────────────┘     │  (AsyncStorage) │     │   (Pending Ops) │
+                        └─────────────────┘     └─────────────────┘
+                                                        │
+                                                        │ Network Restored
+                                                        ▼
+┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│   UI Updated    │ <-- │  Local Storage  │ <-- │   API Server    │
+│                 │     │    Refreshed    │     │                 │
+└─────────────────┘     └─────────────────┘     └─────────────────┘
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Setup
 
-## Learn more
+### Prerequisites
 
-To learn more about developing your project with Expo, look at the following resources:
+- Node.js 18+
+- Expo CLI (`npm install -g expo-cli`)
+- iOS Simulator (Mac) or Android Emulator
+- Expo Go app on your physical device (optional)
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### Installation
 
-## Join the community
+1. Install dependencies:
+```bash
+cd apps/mobile
+npm install
+```
 
-Join our community of developers creating universal apps.
+2. Create environment file:
+```bash
+cp .env.example .env
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+3. Configure environment variables:
+```env
+EXPO_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+EXPO_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+EXPO_PUBLIC_API_URL=http://localhost:3001  # or your production API URL
+```
+
+4. Start the development server:
+```bash
+npm start
+```
+
+5. Run on your preferred platform:
+- Press `i` for iOS Simulator
+- Press `a` for Android Emulator
+- Scan QR code with Expo Go app for physical device
+
+## Project Structure
+
+```
+apps/mobile/
+├── app/                    # Expo Router screens
+│   ├── (tabs)/            # Tab-based navigation
+│   │   ├── index.tsx      # Ideas list tab
+│   │   └── settings.tsx   # Settings tab
+│   ├── _layout.tsx        # Root layout with auth handling
+│   └── modal.tsx          # Modal screens
+├── components/            # React Native components
+│   ├── AuthScreen.tsx     # Authentication UI
+│   ├── IdeasList.tsx      # Ideas list with search/filter
+│   ├── IdeaEditor.tsx     # Create/edit idea form
+│   ├── IdeaDetail.tsx     # Idea detail view with AI report
+│   └── SettingsScreen.tsx # App settings & sync status
+├── config/
+│   └── env.ts            # Environment configuration
+├── constants/
+│   └── theme.ts          # Color themes and fonts
+├── hooks/
+│   ├── use-color-scheme.ts
+│   ├── use-theme-color.ts
+│   └── useNetworkStatus.ts # Network & sync status hook
+└── lib/
+    ├── apiClient.ts      # API communication
+    ├── auth.ts           # Authentication functions
+    ├── authStore.ts      # Zustand auth state
+    ├── offlineStorage.ts # AsyncStorage wrapper
+    ├── supabase.ts       # Supabase client
+    ├── syncService.ts    # Offline sync logic
+    └── types.ts          # TypeScript types
+```
+
+## iOS App Store Requirements
+
+The app is configured to comply with Apple's guidelines:
+
+- ✅ **Privacy Policy** - Link provided in Settings
+- ✅ **Non-exempt encryption** - Declared as false (only HTTPS)
+- ✅ **Data handling** - User data stored securely
+- ✅ **Offline functionality** - App works without network
+- ✅ **Permission descriptions** - All permissions have usage descriptions
+
+## Google Play Store Requirements
+
+The app is configured to comply with Google's guidelines:
+
+- ✅ **Permissions declared** - Only INTERNET and ACCESS_NETWORK_STATE
+- ✅ **Privacy Policy** - Link provided in Settings
+- ✅ **Data safety** - No sensitive data collection beyond user account
+- ✅ **Adaptive icons** - Proper Android adaptive icon setup
+
+## Building for Production
+
+### iOS
+
+```bash
+# Install EAS CLI
+npm install -g eas-cli
+
+# Configure EAS
+eas build:configure
+
+# Build for iOS
+eas build --platform ios
+```
+
+### Android
+
+```bash
+# Build for Android
+eas build --platform android
+```
+
+## Environment Variables
+
+| Variable | Description |
+|----------|-------------|
+| `EXPO_PUBLIC_SUPABASE_URL` | Your Supabase project URL |
+| `EXPO_PUBLIC_SUPABASE_ANON_KEY` | Your Supabase anonymous key |
+| `EXPO_PUBLIC_API_URL` | Backend API URL |
+
+## Tech Stack
+
+- **Framework**: React Native with Expo SDK 54
+- **Navigation**: Expo Router v6
+- **State Management**: Zustand
+- **Storage**: AsyncStorage
+- **Network**: @react-native-community/netinfo
+- **Authentication**: Supabase Auth
+- **Styling**: React Native StyleSheet (no external UI library)
+
+## License
+
+MIT

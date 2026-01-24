@@ -1,17 +1,19 @@
-import { Link } from 'expo-router';
-import { StyleSheet } from 'react-native';
-
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
+// Modal screen - keeping for potential future use
+import { StatusBar } from 'expo-status-bar';
+import { Platform, StyleSheet, View, Text } from 'react-native';
+import { useColorScheme } from '@/hooks/use-color-scheme';
+import { Colors } from '@/constants/theme';
 
 export default function ModalScreen() {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
+  const colors = Colors[colorScheme];
+
   return (
-    <ThemedView style={styles.container}>
-      <ThemedText type="title">This is a modal</ThemedText>
-      <Link href="/" dismissTo style={styles.link}>
-        <ThemedText type="link">Go to home screen</ThemedText>
-      </Link>
-    </ThemedView>
+    <View style={[styles.container, { backgroundColor: isDark ? '#0a0a0a' : '#fff' }]}>
+      <Text style={[styles.title, { color: colors.text }]}>Modal</Text>
+      <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
+    </View>
   );
 }
 
@@ -20,10 +22,9 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 20,
   },
-  link: {
-    marginTop: 15,
-    paddingVertical: 15,
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
   },
 });

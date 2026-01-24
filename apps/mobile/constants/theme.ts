@@ -5,25 +5,38 @@
 
 import { Platform } from 'react-native';
 
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
+// Primary accent color - matching web app purple/indigo theme
+const tintColorLight = '#667eea'; // Purple/indigo - same as web
+const tintColorDark = '#667eea';  // Keep consistent
 
 export const Colors = {
   light: {
-    text: '#11181C',
-    background: '#fff',
+    text: '#1a202c',           // Dark text - same as web
+    textSecondary: '#4a5568',  // Medium text
+    textMuted: '#718096',      // Light text
+    background: '#f7fafc',     // Light gray background - same as web
     tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
+    icon: '#718096',
+    tabIconDefault: '#718096',
     tabIconSelected: tintColorLight,
+    card: '#ffffff',           // White cards
+    border: '#e2e8f0',         // Border color - same as web
+    error: '#c53030',
+    errorBg: '#fed7d7',
   },
   dark: {
-    text: '#ECEDEE',
-    background: '#151718',
+    text: '#f7fafc',
+    textSecondary: '#a0aec0',
+    textMuted: '#718096',
+    background: '#1a202c',
     tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
+    icon: '#a0aec0',
+    tabIconDefault: '#a0aec0',
     tabIconSelected: tintColorDark,
+    card: '#2d3748',
+    border: '#4a5568',
+    error: '#fc8181',
+    errorBg: '#742a2a',
   },
 };
 
