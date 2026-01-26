@@ -28,6 +28,12 @@
   color: #1a202c;
 }
 
+.auth-logo {
+  height: 60px;
+  width: auto;
+  margin-bottom: 8px;
+}
+
 .auth-header p {
   margin: 0;
   color: #718096;

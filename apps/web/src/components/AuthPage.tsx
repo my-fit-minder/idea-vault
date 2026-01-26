@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../lib/authStore';
-import { signIn, signUp, signInWithGoogle, resetPassword, updatePassword } from '../lib/auth';
+import { signIn, signUp, signInWithGoogle, resetPassword } from '../lib/auth';
 import { supabase } from '../lib/supabase';
 import './AuthPage.css';
 
@@ -203,7 +203,7 @@ export function AuthPage({ hasRecoveryToken }: AuthPageProps) {
       <div className="auth-container">
         <div className="auth-card">
           <div className="auth-header">
-            <h1>💡 Idea Vault</h1>
+            <h1>💡 Ideafy</h1>
             <p>Password reset successful</p>
           </div>
           <div className="email-confirmation-message">
@@ -236,11 +236,11 @@ export function AuthPage({ hasRecoveryToken }: AuthPageProps) {
       <div className="auth-container">
         <div className="auth-card">
           <div className="auth-header">
-            <h1>💡 Idea Vault</h1>
+            <h1>💡 Ideafy</h1>
             <p>Set your new password</p>
           </div>
 
-          <form onSubmit={handlePasswordReset} className="auth-form">
+          <form onSubmit={(e) => void handlePasswordReset(e)} className="auth-form">
             <div className="form-group">
               <label htmlFor="new-password">New Password</label>
               <input
@@ -289,7 +289,7 @@ export function AuthPage({ hasRecoveryToken }: AuthPageProps) {
       <div className="auth-container">
         <div className="auth-card">
           <div className="auth-header">
-            <h1>💡 Idea Vault</h1>
+            <h1>💡 Ideafy</h1>
             <p>Check your email</p>
           </div>
           <div className="email-confirmation-message">
@@ -324,11 +324,11 @@ export function AuthPage({ hasRecoveryToken }: AuthPageProps) {
       <div className="auth-container">
         <div className="auth-card">
           <div className="auth-header">
-            <h1>💡 Idea Vault</h1>
+            <h1>💡 Ideafy</h1>
             <p>Reset your password</p>
           </div>
 
-          <form onSubmit={handleForgotPassword} className="auth-form">
+          <form onSubmit={(e) => void handleForgotPassword(e)} className="auth-form">
             <div className="form-group">
               <label htmlFor="forgot-email">Email</label>
               <input
@@ -377,7 +377,7 @@ export function AuthPage({ hasRecoveryToken }: AuthPageProps) {
       <div className="auth-container">
         <div className="auth-card">
           <div className="auth-header">
-            <h1>💡 Idea Vault</h1>
+            <h1>💡 Ideafy</h1>
             <p>Check your email</p>
           </div>
           <div className="email-confirmation-message">
@@ -409,13 +409,13 @@ export function AuthPage({ hasRecoveryToken }: AuthPageProps) {
     <div className="auth-container">
       <div className="auth-card">
         <div className="auth-header">
-          <h1>💡 Idea Vault</h1>
+          <img src="/logo.png" alt="Ideafy" className="auth-logo" />
           <p>Your personal idea management system</p>
         </div>
 
         <button
           type="button"
-          onClick={handleGoogleSignIn}
+          onClick={() => void handleGoogleSignIn()}
           disabled={loading}
           className="google-button"
         >
@@ -444,7 +444,7 @@ export function AuthPage({ hasRecoveryToken }: AuthPageProps) {
           <span>or</span>
         </div>
 
-        <form onSubmit={handleSubmit} className="auth-form">
+        <form onSubmit={(e) => void handleSubmit(e)} className="auth-form">
           <div className="form-group">
             <label htmlFor="email">Email</label>
             <input

@@ -337,7 +337,7 @@ export function IdeasList({ onSelectIdea, onCreateIdea, onEditIdea }: IdeasListP
     <SafeAreaView style={styles.container} edges={['top']}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>💡 Idea Vault</Text>
+        <Text style={styles.headerTitle}>💡 Ideafy</Text>
         {/* Network Status Indicator */}
         <View style={styles.statusContainer}>
           {!isOnline && (

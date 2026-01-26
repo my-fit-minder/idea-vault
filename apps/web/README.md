@@ -1,6 +1,6 @@
-# Idea Vault - Web Application
+# Ideafy - Web Application
 
-React web application for the Idea Vault project, built with Vite, TypeScript, and modern React patterns.
+React web application for the Ideafy project, built with Vite, TypeScript, and modern React patterns.
 
 ## Features
 

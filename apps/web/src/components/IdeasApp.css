@@ -53,15 +53,22 @@
   cursor: pointer;
   transition: all 0.2s;
   user-select: none;
+  display: flex;
+  align-items: center;
 }
 
 .app-logo:hover {
-  color: #667eea;
-  transform: scale(1.05);
+  opacity: 0.8;
+  transform: scale(1.02);
 }
 
 .app-logo:active {
   transform: scale(0.98);
+}
+
+.logo-image {
+  height: 36px;
+  width: auto;
 }
 
 .header-actions {

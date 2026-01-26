@@ -76,7 +76,7 @@ export function Pricing() {
               
               <div className="mt-8 pt-8 border-t border-gray-200">
                 <p className="text-sm text-gray-500">
-                  No hidden fees. No credit card required. Start using Idea Vault today.
+                  No hidden fees. No credit card required. Start using Ideafy today.
                 </p>
               </div>
             </div>

@@ -278,7 +278,7 @@ export function SettingsScreen({ onClose }: SettingsScreenProps) {
         <View style={styles.infoSection}>
           <Text style={styles.infoTitle}>💡 Offline Mode</Text>
           <Text style={styles.infoText}>
-            Idea Vault works offline! Create and edit ideas even without internet connection.
+            Ideafy works offline! Create and edit ideas even without internet connection.
             Your changes will automatically sync when you're back online.
           </Text>
         </View>

@@ -1,6 +1,6 @@
-# Idea Vault API
+# Ideafy API
 
-Express backend API for the Idea Vault application.
+Express backend API for the Ideafy application.
 
 ## Setup
 

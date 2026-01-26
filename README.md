@@ -1,4 +1,4 @@
-# Idea Vault
+# Ideafy
 
 A cross-platform idea management application with offline support, built with React, Express, and Supabase.
 

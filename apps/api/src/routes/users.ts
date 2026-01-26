@@ -6,7 +6,7 @@ export const usersRouter = Router();
 
 // GET /api/users/check-username/:username - Check if username is available
 usersRouter.get('/check-username/:username', authenticate, async (req: AuthRequest, res) => {
-  const { username } = req.params;
+  const username = req.params.username as string;
 
   if (!username || username.trim().length === 0) {
     return res.status(400).json({ error: 'Username is required' });

@@ -4,16 +4,16 @@ import { useState } from 'react';
 
 const faqs = [
   {
-    question: 'What is Idea Vault?',
-    answer: 'Idea Vault is a powerful idea management application that helps you capture, organize, and develop your ideas. It features offline support, AI-powered insights, and seamless sync across all your devices.',
+    question: 'What is Ideafy?',
+    answer: 'Ideafy is a powerful idea management application that helps you capture, organize, and develop your ideas. It features offline support, AI-powered insights, and seamless sync across all your devices.',
   },
   {
-    question: 'Is Idea Vault really free?',
-    answer: 'Yes! Idea Vault is completely free to use. There are no hidden fees, no credit card required, and all features are available to everyone. We believe great tools should be accessible to everyone.',
+    question: 'Is Ideafy really free?',
+    answer: 'Yes! Ideafy is completely free to use. There are no hidden fees, no credit card required, and all features are available to everyone. We believe great tools should be accessible to everyone.',
   },
   {
     question: 'How does offline support work?',
-    answer: 'Idea Vault stores your ideas locally on your device, so you can create, edit, and view your ideas even without an internet connection. When you reconnect, all changes automatically sync to the cloud and across your devices.',
+    answer: 'Ideafy stores your ideas locally on your device, so you can create, edit, and view your ideas even without an internet connection. When you reconnect, all changes automatically sync to the cloud and across your devices.',
   },
   {
     question: 'How does the AI-powered insights work?',
@@ -21,11 +21,11 @@ const faqs = [
   },
   {
     question: 'Do you have a mobile app?',
-    answer: 'Currently, Idea Vault is available as a web application that works great on mobile browsers. A native mobile app is in development and will be available soon.',
+    answer: 'Currently, Ideafy is available as a web application that works great on mobile browsers. A native mobile app is in development and will be available soon.',
   },
   {
-    question: 'Can I use Idea Vault for team collaboration?',
-    answer: 'Currently, Idea Vault is designed for personal use. Each account is private and secure. Team collaboration features may be added in the future based on user feedback.',
+    question: 'Can I use Ideafy for team collaboration?',
+    answer: 'Currently, Ideafy is designed for personal use. Each account is private and secure. Team collaboration features may be added in the future based on user feedback.',
   },
 ];
 
@@ -44,7 +44,7 @@ export function FAQ() {
             Frequently Asked Questions
           </h2>
           <p className="text-xl text-gray-600">
-            Everything you need to know about Idea Vault
+            Everything you need to know about Ideafy
           </p>
         </div>
         

@@ -1,6 +1,12 @@
 import { apiClient } from './apiClient.js';
-import { offlineStorage, type SyncOperation } from './offlineStorage.js';
+import { offlineStorage } from './offlineStorage.js';
 import type { Idea } from '../types/index.js';
+
+// Helper to check online status in a TypeScript-safe way
+const isOnline = (): boolean => {
+  const nav = (globalThis as any).navigator;
+  return nav?.onLine ?? true;
+};
 
 class SyncService {
   private isSyncing = false;
@@ -10,7 +16,7 @@ class SyncService {
       return { synced: 0, errors: 0 };
     }
 
-    if (!navigator.onLine) {
+    if (!isOnline()) {
       return { synced: 0, errors: 0 };
     }
 
@@ -68,7 +74,7 @@ class SyncService {
 
   async getIdeasWithOfflineSupport(): Promise<Idea[]> {
     try {
-      if (navigator.onLine) {
+      if (isOnline()) {
         // Try to fetch from server
         const ideas = await apiClient.ideas.getAll();
         await offlineStorage.saveIdeas(ideas);
@@ -85,7 +91,7 @@ class SyncService {
 
   async createIdeaWithOfflineSupport(data: any): Promise<Idea> {
     try {
-      if (navigator.onLine) {
+      if (isOnline()) {
         const idea = await apiClient.ideas.create(data);
         const ideas = await apiClient.ideas.getAll();
         await offlineStorage.saveIdeas(ideas);
@@ -100,6 +106,10 @@ class SyncService {
           title: data.title,
           content: data.content || null,
           tags: data.tags || [],
+          ai_context: null,
+          ai_report: null,
+          archived: false,
+          deleted: false,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
           synced_at: null,
@@ -117,7 +127,7 @@ class SyncService {
 
   async updateIdeaWithOfflineSupport(id: string, data: any): Promise<Idea> {
     try {
-      if (navigator.onLine) {
+      if (isOnline()) {
         const idea = await apiClient.ideas.update(id, data);
         const ideas = await apiClient.ideas.getAll();
         await offlineStorage.saveIdeas(ideas);
@@ -141,7 +151,7 @@ class SyncService {
 
   async deleteIdeaWithOfflineSupport(id: string): Promise<void> {
     try {
-      if (navigator.onLine) {
+      if (isOnline()) {
         await apiClient.ideas.delete(id);
         const ideas = await apiClient.ideas.getAll();
         await offlineStorage.saveIdeas(ideas);

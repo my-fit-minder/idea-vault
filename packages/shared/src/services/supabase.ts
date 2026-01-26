@@ -2,7 +2,7 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 // Direct access to import.meta.env - Vite will replace these at build/dev time
 // Using direct property access so Vite's static analysis can find and replace them
-const env = import.meta.env as any;
+const env = (import.meta as any).env || {};
 
 const SUPABASE_URL = env.VITE_SUPABASE_URL || env.EXPO_PUBLIC_SUPABASE_URL || '';
 const SUPABASE_ANON_KEY = env.VITE_SUPABASE_ANON_KEY || env.EXPO_PUBLIC_SUPABASE_ANON_KEY || '';

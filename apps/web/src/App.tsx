@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Loader2 } from 'lucide-react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import { useAuthStore } from './lib/authStore';
 import { AuthPage } from './components/AuthPage';
 import { IdeasRoutes } from './components/IdeasRoutes';
 import { PrivacyPolicy } from './components/PrivacyPolicy';
+import { Analytics } from './components/Analytics';
 import './App.css';
 
 function App() {
@@ -60,14 +61,17 @@ function App() {
   const shouldShowAuth = !user || hasRecoveryToken;
 
   return (
-    <Routes>
-      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-      {shouldShowAuth ? (
-        <Route path="*" element={<AuthPage hasRecoveryToken={hasRecoveryToken} />} />
-      ) : (
-        <Route path="/*" element={<IdeasRoutes />} />
-      )}
-    </Routes>
+    <>
+      <Analytics />
+      <Routes>
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        {shouldShowAuth ? (
+          <Route path="*" element={<AuthPage hasRecoveryToken={hasRecoveryToken} />} />
+        ) : (
+          <Route path="/*" element={<IdeasRoutes />} />
+        )}
+      </Routes>
+    </>
   );
 }
 

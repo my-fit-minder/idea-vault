@@ -3,7 +3,7 @@ import type { Idea, CreateIdeaInput, UpdateIdeaInput } from '../types/index.js';
 // Get API URL from environment (works in Vite/Expo)
 const getApiUrl = (): string => {
   // Browser environment - check for Vite env var
-  if (typeof window !== 'undefined') {
+  if (typeof (globalThis as any).window !== 'undefined') {
     const meta = import.meta as any;
     if (meta?.env?.VITE_API_URL) {
       return meta.env.VITE_API_URL;
@@ -46,9 +46,9 @@ async function request<T>(
   const { data: { session } } = await supabase.auth.getSession();
   token = session?.access_token || null;
 
-  const headers: HeadersInit = {
+  const headers: Record<string, string> = {
     'Content-Type': 'application/json',
-    ...options.headers,
+    ...(options.headers as Record<string, string>),
   };
 
   if (token) {
@@ -61,11 +61,12 @@ async function request<T>(
   });
 
   if (!response.ok) {
-    let errorData;
+    let errorData: { error?: string } = { error: response.statusText };
     try {
-      errorData = await response.json();
+      const jsonData = await response.json() as { error?: string };
+      errorData = jsonData;
     } catch {
-      errorData = { error: response.statusText };
+      // Keep default error
     }
     throw new ApiError(
       errorData.error || 'Request failed',
@@ -79,7 +80,7 @@ async function request<T>(
     return undefined as T;
   }
 
-  return response.json();
+  return response.json() as Promise<T>;
 }
 
 export const apiClient = {

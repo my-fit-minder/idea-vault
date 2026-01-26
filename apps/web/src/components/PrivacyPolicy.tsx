@@ -27,9 +27,9 @@ export function PrivacyPolicy() {
           <section className="privacy-section">
             <h2>Introduction</h2>
             <p>
-              At Idea Vault, we are committed to protecting your privacy and ensuring the security of your personal information. 
+              At Ideafy, we are committed to protecting your privacy and ensuring the security of your personal information. 
               This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our 
-              application and services. By using Idea Vault, you agree to the collection and use of information in accordance 
+              application and services. By using Ideafy, you agree to the collection and use of information in accordance 
               with this policy.
             </p>
           </section>

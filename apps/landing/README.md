@@ -1,6 +1,6 @@
-# Idea Vault Landing Page
+# Ideafy Landing Page
 
-A modern, SEO-optimized landing page for Idea Vault built with Next.js 15, TypeScript, and Tailwind CSS.
+A modern, SEO-optimized landing page for Ideafy built with Next.js 15, TypeScript, and Tailwind CSS.
 
 ## Features
 
@@ -30,8 +30,8 @@ A modern, SEO-optimized landing page for Idea Vault built with Next.js 15, TypeS
 
 3. Create a `.env.local` file (optional):
    ```env
-   NEXT_PUBLIC_SITE_URL=https://ideavault.app
-   NEXT_PUBLIC_WEB_APP_URL=https://app.ideavault.app
+   NEXT_PUBLIC_SITE_URL=https://ideafy.app
+   NEXT_PUBLIC_WEB_APP_URL=https://app.ideafy.app
    ```
 
 4. Start the development server:

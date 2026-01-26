@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://ideavault.app/sitemap.xml
+Sitemap: https://ideafy.app/sitemap.xml

@@ -3,8 +3,8 @@ import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 
 export const metadata = {
-  title: 'Privacy Policy - Idea Vault',
-  description: 'Privacy Policy for Idea Vault - Learn how we protect your data and privacy.',
+  title: 'Privacy Policy - Ideafy',
+  description: 'Privacy Policy for Ideafy - Learn how we protect your data and privacy.',
 };
 
 export default function PrivacyPolicy() {
@@ -31,9 +31,9 @@ export default function PrivacyPolicy() {
           <section className="mb-8">
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">Introduction</h2>
             <p className="text-gray-700 leading-relaxed">
-              At Idea Vault, we are committed to protecting your privacy and ensuring the security of your personal information. 
+              At Ideafy, we are committed to protecting your privacy and ensuring the security of your personal information. 
               This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our 
-              application and services. By using Idea Vault, you agree to the collection and use of information in accordance 
+              application and services. By using Ideafy, you agree to the collection and use of information in accordance 
               with this policy.
             </p>
           </section>
@@ -102,7 +102,7 @@ export default function PrivacyPolicy() {
             <p className="text-gray-700 leading-relaxed">
               We may update this Privacy Policy from time to time to reflect changes in our practices or for other operational, 
               legal, or regulatory reasons. We will notify you of any material changes by posting the new Privacy Policy on this 
-              page and updating the "Last Updated" date. We encourage you to review this Privacy Policy periodically to stay 
+              page and updating the &quot;Last Updated&quot; date. We encourage you to review this Privacy Policy periodically to stay 
               informed about how we protect your information.
             </p>
           </section>

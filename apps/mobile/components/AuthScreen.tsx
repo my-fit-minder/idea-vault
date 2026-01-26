@@ -181,7 +181,7 @@ export function AuthScreen() {
           <View style={styles.content}>
             {/* Logo and Title */}
             <Text style={styles.logo}>💡</Text>
-            <Text style={styles.title}>Idea Vault</Text>
+            <Text style={styles.title}>Ideafy</Text>
             <Text style={styles.subtitle}>
               {mode === 'signIn' && 'Welcome back!'}
               {mode === 'signUp' && 'Create your account'}

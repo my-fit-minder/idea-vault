@@ -22,9 +22,9 @@ export function IdeasAppHeader() {
   return (
     <header className="app-header">
       <div className="header-content">
-        <h1 className="app-logo" onClick={handleGoHome} title="Go to home">
-          💡 Idea Vault
-        </h1>
+        <div className="app-logo" onClick={handleGoHome} title="Go to home">
+          <img src="/logo.png" alt="Ideafy" className="logo-image" />
+        </div>
         <div className="header-actions">
           <button onClick={handleGoHome} className="home-button" title="Go to home">
             🏠 Home

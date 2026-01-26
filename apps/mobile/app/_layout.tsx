@@ -1,4 +1,4 @@
-// Root layout for Idea Vault mobile app
+// Root layout for Ideafy mobile app
 import React, { useEffect, useState } from 'react';
 import { View, Text, ActivityIndicator, StyleSheet, AppState, AppStateStatus } from 'react-native';
 import { DefaultTheme, ThemeProvider } from '@react-navigation/native';

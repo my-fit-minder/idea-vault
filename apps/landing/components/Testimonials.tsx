@@ -4,7 +4,7 @@ const testimonials = [
   {
     name: 'Sarah Chen',
     role: 'Product Manager',
-    content: 'Idea Vault has completely transformed how I capture and organize my thoughts. The offline support means I never lose an idea, even on flights. The AI insights are incredibly helpful for developing concepts.',
+    content: 'Ideafy has completely transformed how I capture and organize my thoughts. The offline support means I never lose an idea, even on flights. The AI insights are incredibly helpful for developing concepts.',
     rating: 5,
     avatar: 'SC',
   },
@@ -25,7 +25,7 @@ const testimonials = [
   {
     name: 'David Kim',
     role: 'Designer',
-    content: 'Idea Vault keeps all my creative ideas in one place. The AI-powered reports help me see patterns and connections I might have missed. Highly recommend!',
+    content: 'Ideafy keeps all my creative ideas in one place. The AI-powered reports help me see patterns and connections I might have missed. Highly recommend!',
     rating: 5,
     avatar: 'DK',
   },
@@ -39,7 +39,7 @@ const testimonials = [
   {
     name: 'James Wilson',
     role: 'Consultant',
-    content: 'I\'ve tried many idea management tools, but Idea Vault strikes the perfect balance between simplicity and power. The tagging system and search are exactly what I needed.',
+    content: 'I\'ve tried many idea management tools, but Ideafy strikes the perfect balance between simplicity and power. The tagging system and search are exactly what I needed.',
     rating: 5,
     avatar: 'JW',
   },
@@ -71,7 +71,7 @@ export function Testimonials() {
             Loved by Creators and Innovators
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            See what people are saying about Idea Vault
+            See what people are saying about Ideafy
           </p>
         </div>
         
@@ -80,7 +80,7 @@ export function Testimonials() {
             <Card key={index} hover className="flex flex-col">
               <StarRating rating={testimonial.rating} />
               <p className="text-gray-700 mb-6 flex-grow leading-relaxed">
-                "{testimonial.content}"
+                &quot;{testimonial.content}&quot;
               </p>
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-primary-600 text-white rounded-full flex items-center justify-center font-semibold">

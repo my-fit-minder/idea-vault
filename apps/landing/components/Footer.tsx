@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 const WEB_APP_URL = process.env.NEXT_PUBLIC_WEB_APP_URL || 'http://localhost:5173';
 
@@ -11,7 +12,15 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           {/* Brand */}
           <div className="col-span-1 md:col-span-2">
-            <h3 className="text-2xl font-bold text-white mb-4">💡 Idea Vault</h3>
+            <div className="mb-4">
+              <Image
+                src="/logo-white.png"
+                alt="Ideafy"
+                width={140}
+                height={48}
+                className="h-12 w-auto"
+              />
+            </div>
             <p className="text-gray-400 mb-4 max-w-md">
               Capture, organize, and develop your ideas with a powerful, free tool designed for creators and innovators.
             </p>
@@ -64,7 +73,7 @@ export function Footer() {
         
         <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-400 text-sm mb-4 md:mb-0">
-            © {currentYear} Idea Vault. All rights reserved.
+            © {currentYear} Ideafy. All rights reserved. Powered by ZenstHub.
           </p>
           <div className="flex gap-6">
             {/* Add social media links here if needed */}

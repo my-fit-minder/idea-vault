@@ -26,7 +26,7 @@ const IDEA_QUOTES = [
   },
   {
     title: "🧠 Mind Check-in",
-    body: "Your mind is a garden, your thoughts are the seeds. Time to check what's growing in your Idea Vault!",
+    body: "Your mind is a garden, your thoughts are the seeds. Time to check what's growing in your Ideafy!",
   },
   {
     title: "📝 Idea Time!",

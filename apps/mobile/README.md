@@ -1,4 +1,4 @@
-# Idea Vault Mobile App
+# Ideafy Mobile App
 
 A React Native mobile app for managing your startup ideas with **full offline support**. Built with Expo and designed following iOS and Android guidelines.
 

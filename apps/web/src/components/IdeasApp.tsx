@@ -176,7 +176,7 @@ export function IdeasApp() {
       <header className="app-header">
         <div className="header-content">
           <h1 className="app-logo" onClick={handleGoHome} title="Go to home">
-            💡 Idea Vault
+            Ideafy
           </h1>
           <div className="header-actions">
             <button onClick={handleGoHome} className="home-button" title="Go to home">
