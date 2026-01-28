@@ -10,25 +10,31 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.ideafy.app",
+      "bundleIdentifier": "com.zensthub.ideafy",
       "buildNumber": "1",
       "infoPlist": {
         "NSCameraUsageDescription": "Ideafy may use the camera for future features",
         "NSPhotoLibraryUsageDescription": "Ideafy may access photos for future features",
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "CFBundleURLTypes": [
+          {
+            "CFBundleURLSchemes": [
+              "ideafy",
+              "com.googleusercontent.apps.565801059910-5c9rf0khttimdesh5gkeagmr8crsrj3e"
+            ]
+          }
+        ]
       },
       "config": {
         "usesNonExemptEncryption": false
       }
     },
     "android": {
-      "package": "com.ideafy.app",
+      "package": "com.zensthub.ideafy",
       "versionCode": 1,
       "adaptiveIcon": {
-        "backgroundColor": "#FFD700",
-        "foregroundImage": "./assets/images/android-icon-foreground.png",
-        "backgroundImage": "./assets/images/android-icon-background.png",
-        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+        "backgroundColor": "#0a1628",
+        "foregroundImage": "./assets/images/android-icon-foreground.png"
       },
       "edgeToEdgeEnabled": true,
       "permissions": [
@@ -37,6 +43,23 @@
         "android.permission.RECEIVE_BOOT_COMPLETED",
         "android.permission.SCHEDULE_EXACT_ALARM",
         "android.permission.POST_NOTIFICATIONS"
+      ],
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "ideafy",
+              "host": "auth",
+              "pathPrefix": "/callback"
+            }
+          ],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        }
       ]
     },
     "web": {
@@ -46,14 +69,20 @@
     "plugins": [
       "expo-router",
       [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.565801059910-5c9rf0khttimdesh5gkeagmr8crsrj3e"
+        }
+      ],
+      [
         "expo-splash-screen",
         {
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#FFD700",
+          "backgroundColor": "#0a1628",
           "dark": {
-            "backgroundColor": "#1a1a1a",
+            "backgroundColor": "#0a1628",
             "image": "./assets/images/splash-icon.png"
           }
         }
@@ -75,11 +104,12 @@
       "supabaseUrl": "${EXPO_PUBLIC_SUPABASE_URL}",
       "supabaseAnonKey": "${EXPO_PUBLIC_SUPABASE_ANON_KEY}",
       "apiUrl": "${EXPO_PUBLIC_API_URL}",
+      "router": {},
       "eas": {
-        "projectId": "your-eas-project-id"
+        "projectId": "1924f4f8-7c99-48d8-a40c-b15db03d98b1"
       }
     },
-    "owner": "your-expo-username",
+    "owner": "amitojsingh99",
     "updates": {
       "fallbackToCacheTimeout": 0
     },

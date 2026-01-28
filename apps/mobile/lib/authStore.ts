@@ -61,26 +61,32 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       });
 
       // Listen for auth changes
-      const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-        // Generate username for new OAuth users
-        if (event === 'SIGNED_IN' && session?.user) {
-          const username = session.user.user_metadata?.username;
-          if (!username) {
-            try {
-              const newUsername = generateRandomUsername();
-              await supabase.auth.updateUser({
-                data: { username: newUsername }
-              });
-            } catch (error) {
-              console.error('Failed to generate username:', error);
-            }
-          }
-        }
-
+      // IMPORTANT: Don't use await directly in onAuthStateChange callback
+      // This causes a deadlock with setSession. Use setTimeout to defer async operations.
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+        // Update state immediately (synchronous)
         set({
           session,
           user: session?.user ? { id: session.user.id, email: session.user.email } : null,
         });
+
+        // Defer async operations to prevent deadlock
+        if (event === 'SIGNED_IN' && session?.user) {
+          setTimeout(async () => {
+            // Generate username for new OAuth users
+            const username = session.user.user_metadata?.username;
+            if (!username) {
+              try {
+                const newUsername = generateRandomUsername();
+                await supabase.auth.updateUser({
+                  data: { username: newUsername }
+                });
+              } catch (error) {
+                console.error('Failed to generate username:', error);
+              }
+            }
+          }, 0);
+        }
       });
 
       // Return cleanup function (though it's not used in zustand)

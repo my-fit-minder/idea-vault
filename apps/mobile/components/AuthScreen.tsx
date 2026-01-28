@@ -13,6 +13,7 @@ import {
   ActivityIndicator,
   Alert,
   Linking,
+  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { signIn, signUp, signInWithGoogle, resetPassword } from '../lib/auth';
@@ -148,10 +149,10 @@ export function AuthScreen() {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.content}>
-          <Text style={styles.logo}>💡</Text>
-          <Text style={styles.title}>Check your email</Text>
+          <Image source={require('../assets/images/logo.png')} style={styles.logo} resizeMode="contain" />
+          <Text style={styles.checkEmailTitle}>Check your email</Text>
           <Text style={styles.subtitle}>
-            We've sent a password reset link to {email}
+            We have sent a password reset link to {email}
           </Text>
           <Text style={styles.helperText}>
             Please check your inbox and click the link to reset your password. The link will expire in 1 hour.
@@ -179,9 +180,8 @@ export function AuthScreen() {
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.content}>
-            {/* Logo and Title */}
-            <Text style={styles.logo}>💡</Text>
-            <Text style={styles.title}>Ideafy</Text>
+            {/* Logo */}
+            <Image source={require('../assets/images/logo.png')} style={styles.logo} resizeMode="contain" />
             <Text style={styles.subtitle}>
               {mode === 'signIn' && 'Welcome back!'}
               {mode === 'signUp' && 'Create your account'}
@@ -306,7 +306,7 @@ export function AuthScreen() {
               {mode === 'signIn' && (
                 <TouchableOpacity onPress={() => switchMode('signUp')}>
                   <Text style={styles.footerText}>
-                    Don't have an account?{' '}
+                    Do not have an account?{' '}
                     <Text style={styles.footerLink}>Sign up</Text>
                   </Text>
                 </TouchableOpacity>
@@ -363,11 +363,12 @@ const createStyles = (isDark: boolean, colors: typeof Colors.light) =>
       elevation: 20,
     },
     logo: {
-      fontSize: 64,
-      textAlign: 'center',
-      marginBottom: 8,
+      width: 200,
+      height: 100,
+      alignSelf: 'center',
+      marginBottom: 16,
     },
-    title: {
+    checkEmailTitle: {
       fontSize: 28,
       fontWeight: '700',
       color: '#1a202c',

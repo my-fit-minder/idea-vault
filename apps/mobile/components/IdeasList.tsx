@@ -12,6 +12,7 @@ import {
   Alert,
   Modal,
   Pressable,
+  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useColorScheme } from '../hooks/use-color-scheme';
@@ -73,7 +74,7 @@ export function IdeasList({ onSelectIdea, onCreateIdea, onEditIdea }: IdeasListP
   }, [hasMore]);
   
   // Debounce search query
-  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   
   useEffect(() => {
     if (searchTimeoutRef.current) {
@@ -315,7 +316,7 @@ export function IdeasList({ onSelectIdea, onCreateIdea, onEditIdea }: IdeasListP
 
   const renderEmptyState = () => (
     <View style={styles.emptyState}>
-      <Text style={styles.emptyIcon}>💡</Text>
+      <Image source={require('../assets/images/logo.png')} style={styles.emptyIcon} resizeMode="contain" />
       <Text style={styles.emptyTitle}>
         {!filters.showActive && !filters.showArchived
           ? 'No filter selected'
@@ -337,7 +338,7 @@ export function IdeasList({ onSelectIdea, onCreateIdea, onEditIdea }: IdeasListP
     <SafeAreaView style={styles.container} edges={['top']}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>💡 Ideafy</Text>
+        <Image source={require('../assets/images/logo.png')} style={styles.headerLogo} resizeMode="contain" />
         {/* Network Status Indicator */}
         <View style={styles.statusContainer}>
           {!isOnline && (
@@ -512,10 +513,9 @@ const createStyles = (isDark: boolean, colors: typeof Colors.light) =>
       shadowRadius: 3,
       elevation: 2,
     },
-    headerTitle: {
-      fontSize: 24,
-      fontWeight: '700',
-      color: '#1a202c',
+    headerLogo: {
+      width: 120,
+      height: 40,
     },
     statusContainer: {
       flexDirection: 'row',
@@ -824,7 +824,8 @@ const createStyles = (isDark: boolean, colors: typeof Colors.light) =>
       paddingVertical: 60,
     },
     emptyIcon: {
-      fontSize: 64,
+      width: 150,
+      height: 80,
       marginBottom: 16,
     },
     emptyTitle: {
