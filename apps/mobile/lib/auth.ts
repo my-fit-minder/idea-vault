@@ -91,11 +91,20 @@ export async function signInWithGoogle() {
       const googleSignInModule = await import('@react-native-google-signin/google-signin');
       const { GoogleSignin } = googleSignInModule;
       
+      // Safety check: verify module is properly loaded
+      if (!GoogleSignin || typeof GoogleSignin.configure !== 'function') {
+        console.warn('⚠️  Google Sign-In module not properly initialized, using OAuth fallback');
+        throw new Error('Google Sign-In module not available');
+      }
+      
       // Configure Google Sign-In
-      // For iOS, we can optionally specify the iOS Client ID
+      // IMPORTANT: To use native Google Sign-In with Supabase, you MUST either:
+      // 1. Upgrade @react-native-google-signin/google-signin to a version with Universal module support
+      //    and generate custom nonce (see: https://react-native-google-signin.github.io/docs/security)
+      // 2. OR disable "Skip nonce checks" in Supabase Dashboard → Authentication → Providers → Google
       const config: any = {
         webClientId: GOOGLE_WEB_CLIENT_ID, // Use Web Client ID (required)
-        offlineAccess: true, // Get refresh token
+        offlineAccess: false, // Disable offline access to prevent nonce in ID token
       };
       
       // Add iOS client ID if on iOS (optional but can help with some configurations)
@@ -103,9 +112,16 @@ export async function signInWithGoogle() {
         config.iosClientId = GOOGLE_IOS_CLIENT_ID;
       }
       
-      GoogleSignin.configure(config);
+      // Wrap configure in try-catch for additional safety
+      try {
+        GoogleSignin.configure(config);
+      } catch (configError: any) {
+        console.error('❌ Failed to configure Google Sign-In:', configError);
+        throw new Error('Google Sign-In configuration failed');
+      }
       
       console.log('🔐 Using native Google Sign-In');
+      console.log('⚠️  Note: Ensure "Skip nonce checks" is enabled in Supabase Dashboard for Google provider');
       
       // Check if Google Play Services are available (Android)
       await GoogleSignin.hasPlayServices();
@@ -117,6 +133,8 @@ export async function signInWithGoogle() {
         console.log('✅ Google Sign-In successful, exchanging ID token with Supabase...');
         
         // Exchange ID token with Supabase
+        // NOTE: Do NOT pass nonce here - Supabase dashboard must have "Skip nonce checks" enabled
+        // because the current version of @react-native-google-signin doesn't expose the raw nonce
         const { data, error } = await supabase.auth.signInWithIdToken({
           provider: 'google',
           token: response.data.idToken,
@@ -124,6 +142,16 @@ export async function signInWithGoogle() {
         
         if (error) {
           console.error('❌ Supabase signInWithIdToken error:', error);
+          // If it's a nonce error, provide helpful message
+          if (error.message?.includes('nonce') || error.message?.includes('Nonce')) {
+            console.error('');
+            console.error('🔧 NONCE ERROR FIX:');
+            console.error('   Go to Supabase Dashboard → Authentication → Providers → Google');
+            console.error('   Enable "Skip nonce checks" option');
+            console.error('');
+            console.error('   Alternatively, upgrade @react-native-google-signin to use the Universal module');
+            console.error('   with custom nonce support. See: https://react-native-google-signin.github.io/docs/security');
+          }
           throw error;
         }
         
@@ -139,6 +167,12 @@ export async function signInWithGoogle() {
       const isTurboModuleError = errorMessage.includes('TurboModuleRegistry') || 
                                   errorMessage.includes('RNGoogleSignin') ||
                                   errorMessage.includes('could not be found');
+      
+      // Check if it's a nonce error - these should not fall back to OAuth (same issue)
+      const isNonceError = errorMessage.includes('nonce') || errorMessage.includes('Nonce');
+      if (isNonceError) {
+        throw error; // Re-throw nonce errors, don't fall back
+      }
       
       if (isTurboModuleError) {
         // Native module not available (expected in Expo Go or if not properly configured)

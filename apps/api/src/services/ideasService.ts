@@ -154,6 +154,8 @@ export class IdeasService {
         content: input.content || null,
         ai_context: input.ai_context || null,
         ai_report: null, // Reports are generated separately
+        ai_roadmap: null, // Roadmaps are generated separately
+        ai_validation_roadmap: null, // Validation roadmaps are generated separately
         tags: input.tags || [],
         archived: false,
         deleted: false
@@ -190,6 +192,16 @@ export class IdeasService {
     // Only update ai_report if it's explicitly provided
     if (input.ai_report !== undefined) {
       updateData.ai_report = input.ai_report;
+    }
+
+    // Only update ai_roadmap if it's explicitly provided
+    if (input.ai_roadmap !== undefined) {
+      updateData.ai_roadmap = input.ai_roadmap;
+    }
+
+    // Only update ai_validation_roadmap if it's explicitly provided
+    if (input.ai_validation_roadmap !== undefined) {
+      updateData.ai_validation_roadmap = input.ai_validation_roadmap;
     }
 
     // Handle archived and deleted flags

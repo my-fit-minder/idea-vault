@@ -265,7 +265,7 @@ export function AuthScreen() {
                   I accept the{' '}
                   <Text
                     style={styles.link}
-                    onPress={() => Linking.openURL('https://yourdomain.com/privacy')}
+                    onPress={() => Linking.openURL('https://ideafy.zensthub.com/privacy/')}
                   >
                     Privacy Policy
                   </Text>

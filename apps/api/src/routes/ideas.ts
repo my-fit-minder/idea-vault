@@ -46,32 +46,57 @@ ideasRouter.get('/', async (req: AuthRequest, res) => {
 });
 
 /**
- * Generate AI report in the background and update the idea when complete
+ * Generate all AI reports in the background and update the idea when complete
  * This runs asynchronously and doesn't block the API response
+ * Generates: Analysis Report, Product Roadmap, and Validation Roadmap
  */
-function generateReportInBackground(
+function generateReportsInBackground(
   ideaId: string,
   userId: string,
   ideaData: { title: string; content: string | null; ai_context: string | null; tags: string[] }
 ): void {
   // Use setImmediate to ensure this runs after the response is sent
   setImmediate(async () => {
-    try {
-      const report = await aiService.generateReport({
-        title: ideaData.title,
-        content: ideaData.content,
-        ai_context: ideaData.ai_context,
-        tags: ideaData.tags,
-      });
+    const input = {
+      title: ideaData.title,
+      content: ideaData.content,
+      ai_context: ideaData.ai_context,
+      tags: ideaData.tags,
+    };
 
-      // Update the idea with the generated report
-      await ideasService.updateIdea(ideaId, { ai_report: report }, userId);
-      console.log(`✅ Successfully generated AI report for idea ${ideaId}`);
-    } catch (error: any) {
-      // Log error but don't throw - the idea was already created successfully
-      console.error(`❌ Failed to generate AI report for idea ${ideaId}:`, error.message);
-      // The idea exists without a report - user can manually regenerate it later
-    }
+    // Generate all three reports in parallel
+    const reportPromises = [
+      aiService.generateReport(input).then(
+        async (report) => {
+          await ideasService.updateIdea(ideaId, { ai_report: report }, userId);
+          console.log(`✅ Successfully generated AI report for idea ${ideaId}`);
+        }
+      ).catch((error: any) => {
+        console.error(`❌ Failed to generate AI report for idea ${ideaId}:`, error.message);
+      }),
+      
+      aiService.generateRoadmap(input).then(
+        async (roadmap) => {
+          await ideasService.updateIdea(ideaId, { ai_roadmap: roadmap }, userId);
+          console.log(`✅ Successfully generated product roadmap for idea ${ideaId}`);
+        }
+      ).catch((error: any) => {
+        console.error(`❌ Failed to generate product roadmap for idea ${ideaId}:`, error.message);
+      }),
+      
+      aiService.generateValidationRoadmap(input).then(
+        async (validationRoadmap) => {
+          await ideasService.updateIdea(ideaId, { ai_validation_roadmap: validationRoadmap }, userId);
+          console.log(`✅ Successfully generated validation roadmap for idea ${ideaId}`);
+        }
+      ).catch((error: any) => {
+        console.error(`❌ Failed to generate validation roadmap for idea ${ideaId}:`, error.message);
+      }),
+    ];
+
+    // Wait for all reports to complete (or fail)
+    await Promise.allSettled(reportPromises);
+    console.log(`📊 Completed all report generation attempts for idea ${ideaId}`);
   });
 }
 
@@ -98,9 +123,9 @@ ideasRouter.post('/', async (req: AuthRequest, res) => {
   // Create the idea first
   const idea = await ideasService.createIdea(input, req.user.id);
 
-  // Start AI report generation in the background (non-blocking)
-  // The response is sent immediately, and the report will be added when ready
-  generateReportInBackground(idea.id, req.user.id, {
+  // Start all AI reports generation in the background (non-blocking)
+  // The response is sent immediately, and the reports will be added when ready
+  generateReportsInBackground(idea.id, req.user.id, {
     title: idea.title,
     content: idea.content,
     ai_context: idea.ai_context,
@@ -144,7 +169,111 @@ ideasRouter.post('/:id/generate-report', async (req: AuthRequest, res) => {
     res.json({ report, idea: updatedIdea });
   } catch (error: any) {
     console.error('Error generating report:', error);
+    
+    // Check if it's a service unavailable error
+    const isServiceUnavailable = error.message?.includes('currently unavailable');
+    
+    if (isServiceUnavailable) {
+      return res.status(503).json({ 
+        error: error.message || 'Google Gemini model is currently unavailable. Please try again in a few moments.' 
+      });
+    }
+    
     res.status(500).json({ error: error.message || 'Failed to generate AI report' });
+  }
+});
+
+// POST /api/ideas/:id/generate-roadmap - Generate AI product roadmap for an idea
+// This must come before /:id routes to avoid route conflicts
+ideasRouter.post('/:id/generate-roadmap', async (req: AuthRequest, res) => {
+  if (!req.user) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  try {
+    // Get the idea first to verify ownership
+    const idea = await ideasService.getIdeaById(req.params.id as string, req.user.id);
+    
+    if (!idea) {
+      return res.status(404).json({ error: 'Idea not found' });
+    }
+
+    // Generate the AI product roadmap
+    const roadmap = await aiService.generateRoadmap({
+      title: idea.title,
+      content: idea.content,
+      ai_context: idea.ai_context,
+      tags: idea.tags,
+    });
+
+    // Update the idea with the generated roadmap
+    const updatedIdea = await ideasService.updateIdea(
+      req.params.id as string,
+      { ai_roadmap: roadmap },
+      req.user.id
+    );
+
+    res.json({ roadmap, idea: updatedIdea });
+  } catch (error: any) {
+    console.error('Error generating roadmap:', error);
+    
+    // Check if it's a service unavailable error
+    const isServiceUnavailable = error.message?.includes('currently unavailable');
+    
+    if (isServiceUnavailable) {
+      return res.status(503).json({ 
+        error: error.message || 'Google Gemini model is currently unavailable. Please try again in a few moments.' 
+      });
+    }
+    
+    res.status(500).json({ error: error.message || 'Failed to generate AI roadmap' });
+  }
+});
+
+// POST /api/ideas/:id/generate-validation-roadmap - Generate AI validation roadmap for an idea
+// This must come before /:id routes to avoid route conflicts
+ideasRouter.post('/:id/generate-validation-roadmap', async (req: AuthRequest, res) => {
+  if (!req.user) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  try {
+    // Get the idea first to verify ownership
+    const idea = await ideasService.getIdeaById(req.params.id as string, req.user.id);
+    
+    if (!idea) {
+      return res.status(404).json({ error: 'Idea not found' });
+    }
+
+    // Generate the AI validation roadmap
+    const validationRoadmap = await aiService.generateValidationRoadmap({
+      title: idea.title,
+      content: idea.content,
+      ai_context: idea.ai_context,
+      tags: idea.tags,
+    });
+
+    // Update the idea with the generated validation roadmap
+    const updatedIdea = await ideasService.updateIdea(
+      req.params.id as string,
+      { ai_validation_roadmap: validationRoadmap },
+      req.user.id
+    );
+
+    res.json({ validationRoadmap, idea: updatedIdea });
+  } catch (error: any) {
+    console.error('Error generating validation roadmap:', error);
+    
+    // Check if it's a service unavailable error
+    const isServiceUnavailable = error.message?.includes('currently unavailable');
+    
+    if (isServiceUnavailable) {
+      return res.status(503).json({ 
+        error: error.message || 'Google Gemini model is currently unavailable. Please try again in a few moments.' 
+      });
+    }
+    
+    res.status(500).json({ error: error.message || 'Failed to generate AI validation roadmap' });
   }
 });
 

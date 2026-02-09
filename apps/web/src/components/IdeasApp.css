@@ -97,6 +97,10 @@
   gap: 6px;
 }
 
+.button-text {
+  display: inline;
+}
+
 .home-button:hover {
   background: #edf2f7;
   border-color: #cbd5e0;
@@ -134,6 +138,9 @@
   font-size: 14px;
   font-weight: 500;
   transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .sign-out-button:hover {
@@ -160,10 +167,14 @@
 
 /* Mobile */
 @media (max-width: 768px) {
+  .app-header {
+    position: relative;
+  }
+
   .header-content {
-    flex-direction: column;
+    flex-direction: row;
     gap: 12px;
-    align-items: flex-start;
+    align-items: center;
     padding: 12px 16px;
   }
 
@@ -172,16 +183,24 @@
   }
 
   .header-actions {
-    width: 100%;
-    justify-content: space-between;
-    flex-wrap: wrap;
+    width: auto;
+    justify-content: flex-end;
+    flex-wrap: nowrap;
     gap: 8px;
   }
 
   .home-button,
-  .settings-button {
-    padding: 10px 14px;
-    font-size: 13px;
+  .settings-button,
+  .sign-out-button {
+    padding: 8px;
+    min-width: auto;
+    width: auto;
+  }
+
+  .home-button .button-text,
+  .settings-button .button-text,
+  .sign-out-button .button-text {
+    display: none;
   }
 
   .user-info {
@@ -190,11 +209,6 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     max-width: 150px;
-  }
-
-  .sign-out-button {
-    padding: 10px 14px;
-    font-size: 13px;
   }
 
   .app-main {
@@ -213,17 +227,27 @@
   }
 
   .header-actions {
-    flex-direction: column;
-    width: 100%;
-    gap: 8px;
+    flex-direction: row;
+    width: auto;
+    gap: 6px;
   }
 
-  .user-info,
   .home-button,
   .settings-button,
   .sign-out-button {
-    width: 100%;
-    text-align: center;
+    padding: 8px;
+    min-width: auto;
+    width: auto;
+  }
+
+  .home-button .button-text,
+  .settings-button .button-text,
+  .sign-out-button .button-text {
+    display: none;
+  }
+
+  .user-info {
+    display: none;
   }
 
   .app-main {

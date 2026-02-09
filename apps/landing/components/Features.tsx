@@ -4,29 +4,29 @@ const features = [
   {
     icon: (
       <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" />
       </svg>
     ),
-    title: 'Create & Edit Ideas',
-    description: 'Quickly capture your thoughts with a clean, intuitive interface. Edit and refine your ideas anytime, anywhere.',
+    title: 'Secure Cloud Storage',
+    description: 'Store all your ideas safely in the cloud with enterprise-grade encryption. Your data is backed up and accessible from any device, anywhere.',
   },
   {
     icon: (
       <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
       </svg>
     ),
-    title: 'Search & Filter',
-    description: 'Find exactly what you need with powerful search and filtering capabilities. Organize by tags, dates, or keywords.',
+    title: 'AI Product Roadmaps',
+    description: 'Generate comprehensive product roadmaps powered by AI. Get detailed, actionable roadmaps that break down your ideas into clear development phases.',
   },
   {
     icon: (
       <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
       </svg>
     ),
-    title: 'Tag System',
-    description: 'Organize your ideas with a flexible tagging system. Create custom tags and filter by multiple tags at once.',
+    title: 'AI Validation Roadmaps',
+    description: 'Get AI-generated validation roadmaps to test and validate your ideas before full development. Save time and resources with strategic validation plans.',
   },
   {
     icon: (
@@ -34,8 +34,8 @@ const features = [
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
       </svg>
     ),
-    title: 'Offline & Cross-Device Sync',
-    description: 'Work seamlessly offline and access your ideas from any device. Your ideas automatically sync across your phone, tablet, and computer in real-time.',
+    title: 'Offline Storage & Sync',
+    description: 'Store ideas locally for offline access. When you reconnect, everything automatically syncs to the cloud and across all your devices seamlessly.',
   },
   {
     icon: (
@@ -43,17 +43,17 @@ const features = [
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
       </svg>
     ),
-    title: 'Secure Authentication',
-    description: 'Your data is protected with enterprise-grade security. Sign in with email and password, all encrypted and secure.',
+    title: 'Secure & Private',
+    description: 'Your ideas are encrypted and stored securely. Enterprise-grade security ensures your data remains private and protected at all times.',
   },
   {
     icon: (
       <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
       </svg>
     ),
-    title: 'AI-Powered Insights',
-    description: 'AI-powered idea analysis with clear statements, target users, keywords, recommendations, and practical validation strategies.',
+    title: 'Easy Access & Search',
+    description: 'Quickly find any stored idea with powerful search. Access your roadmaps and ideas instantly from any device with a simple search.',
   },
 ];
 
@@ -63,10 +63,10 @@ export function Features() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Everything You Need to Manage Ideas
+            Secure Storage & AI Roadmaps
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Powerful features designed to help you capture, organize, and develop your ideas into reality.
+            Store your ideas safely and get AI-powered roadmaps to turn them into reality. Everything you need in one place.
           </p>
         </div>
         

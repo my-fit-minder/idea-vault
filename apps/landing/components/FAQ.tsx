@@ -5,19 +5,19 @@ import { useState } from 'react';
 const faqs = [
   {
     question: 'What is Ideafy?',
-    answer: 'Ideafy is a powerful idea management application that helps you capture, organize, and develop your ideas. It features offline support, AI-powered insights, and seamless sync across all your devices.',
+    answer: 'Ideafy is a secure idea storage platform that helps you store your ideas safely in the cloud and generate AI-powered product and validation roadmaps. It features secure cloud storage, offline support, and seamless sync across all your devices.',
   },
   {
     question: 'Is Ideafy really free?',
-    answer: 'Yes! Ideafy is completely free to use. There are no hidden fees, no credit card required, and all features are available to everyone. We believe great tools should be accessible to everyone.',
+    answer: 'Yes! Ideafy is completely free to use. There are no hidden fees, no credit card required, and all features including secure storage and AI roadmap generation are available to everyone. We believe great tools should be accessible to everyone.',
   },
   {
-    question: 'How does offline support work?',
-    answer: 'Ideafy stores your ideas locally on your device, so you can create, edit, and view your ideas even without an internet connection. When you reconnect, all changes automatically sync to the cloud and across your devices.',
+    question: 'How does storage and roadmap generation work?',
+    answer: 'Ideafy stores your ideas securely in the cloud with encryption. You can access your stored ideas from any device. For any idea, you can generate AI-powered product roadmaps or validation roadmaps that provide actionable steps to develop or validate your ideas. When offline, your ideas are stored locally and sync automatically when you reconnect.',
   },
   {
-    question: 'How does the AI-powered insights work?',
-    answer: 'Our AI analyzes your ideas to provide intelligent reports and insights. It helps identify patterns, connections, and opportunities to develop your concepts further. All processing is done securely and your data remains private.',
+    question: 'What are AI roadmaps?',
+    answer: 'AI roadmaps are comprehensive, AI-generated plans for your ideas. Product roadmaps break down your idea into clear development phases, while validation roadmaps help you test and validate your ideas before full development. Both provide actionable steps to turn your ideas into reality.',
   },
   {
     question: 'Do you have a mobile app?',

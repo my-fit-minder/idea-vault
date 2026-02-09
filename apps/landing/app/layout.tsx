@@ -10,16 +10,16 @@ const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID;
 const GOOGLE_ANALYTICS_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
 
 export const metadata: Metadata = {
-  title: 'Ideafy - Capture, Organize, and Develop Your Ideas',
-  description: 'A powerful idea management application with offline support, AI-powered insights, and seamless sync across all your devices. Free to use.',
-  keywords: ['idea management', 'productivity', 'note taking', 'idea organization', 'offline notes', 'AI insights'],
+  title: 'Ideafy - Secure Storage & AI Roadmaps for Your Ideas',
+  description: 'Store your ideas securely in the cloud and get AI-powered product and validation roadmaps. Secure storage with offline support and seamless sync across all devices. Free to use.',
+  keywords: ['idea storage', 'cloud storage', 'AI roadmaps', 'product roadmap', 'validation roadmap', 'idea management', 'secure storage'],
   authors: [{ name: 'Ideafy' }],
   creator: 'Ideafy',
   publisher: 'Ideafy',
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://ideafy.zensthub.com'),
   openGraph: {
-    title: 'Ideafy - Capture, Organize, and Develop Your Ideas',
-    description: 'A powerful idea management application with offline support, AI-powered insights, and seamless sync across all your devices.',
+    title: 'Ideafy - Secure Storage & AI Roadmaps for Your Ideas',
+    description: 'Store your ideas securely in the cloud and get AI-powered product and validation roadmaps. Secure storage with offline support and seamless sync.',
     url: process.env.NEXT_PUBLIC_SITE_URL || 'https://ideafy.zensthub.com',
     siteName: 'Ideafy',
     locale: 'en_US',
@@ -35,8 +35,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Ideafy - Capture, Organize, and Develop Your Ideas',
-    description: 'A powerful idea management application with offline support, AI-powered insights, and seamless sync.',
+    title: 'Ideafy - Secure Storage & AI Roadmaps for Your Ideas',
+    description: 'Store your ideas securely and get AI-powered roadmaps. Secure cloud storage with offline support and seamless sync.',
     images: ['/og-image.png'],
   },
   robots: {
@@ -120,7 +120,7 @@ export default function RootLayout({
                 ratingValue: '4.8',
                 ratingCount: '127',
               },
-              description: 'A powerful idea management application with offline support, AI-powered insights, and seamless sync across all your devices.',
+              description: 'Store your ideas securely in the cloud and get AI-powered product and validation roadmaps. Secure storage with offline support and seamless sync.',
             }),
           }}
         />
@@ -148,7 +148,7 @@ export default function RootLayout({
                   name: 'What is Ideafy?',
                   acceptedAnswer: {
                     '@type': 'Answer',
-                    text: 'Ideafy is a powerful idea management application that helps you capture, organize, and develop your ideas. It features offline support, AI-powered insights, and seamless sync across all your devices.',
+                    text: 'Ideafy is a secure idea storage platform that helps you store your ideas safely in the cloud and generate AI-powered product and validation roadmaps. It features offline support, secure cloud storage, and seamless sync across all your devices.',
                   },
                 },
                 {
@@ -161,10 +161,10 @@ export default function RootLayout({
                 },
                 {
                   '@type': 'Question',
-                  name: 'How does offline support work?',
+                  name: 'How does storage and roadmap generation work?',
                   acceptedAnswer: {
                     '@type': 'Answer',
-                    text: 'Ideafy stores your ideas locally on your device, so you can create, edit, and view your ideas even without an internet connection. When you reconnect, all changes automatically sync to the cloud and across your devices.',
+                    text: 'Ideafy stores your ideas securely in the cloud with encryption. You can access your stored ideas from any device. For any idea, you can generate AI-powered product roadmaps or validation roadmaps that provide actionable steps to develop or validate your ideas.',
                   },
                 },
                 {

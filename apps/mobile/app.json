@@ -7,14 +7,13 @@
     "icon": "./assets/images/icon.png",
     "scheme": "ideafy",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "ios": {
-      "supportsTablet": true,
+      "supportsTablet": false,
       "bundleIdentifier": "com.zensthub.ideafy",
       "buildNumber": "1",
       "infoPlist": {
         "NSCameraUsageDescription": "Ideafy may use the camera for future features",
-        "NSPhotoLibraryUsageDescription": "Ideafy may access photos for future features",
         "ITSAppUsesNonExemptEncryption": false,
         "CFBundleURLTypes": [
           {

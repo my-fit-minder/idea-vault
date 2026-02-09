@@ -344,6 +344,8 @@ class SyncService {
       content: data.content || null,
       ai_context: data.ai_context || null,
       ai_report: null,
+      ai_roadmap: null,
+      ai_validation_roadmap: null,
       tags: data.tags || [],
       archived: false,
       deleted: false,
@@ -495,6 +497,34 @@ class SyncService {
     }
 
     const result = await apiClient.ideas.generateReport(id);
+    await offlineStorage.saveIdea(result.idea);
+    return result;
+  }
+
+  async generateRoadmap(id: string): Promise<{ roadmap: string; idea: Idea }> {
+    if (!this.isOnline) {
+      throw new Error('Cannot generate AI roadmap while offline');
+    }
+
+    if (id.startsWith('local-')) {
+      throw new Error('Please sync your idea first before generating AI roadmap');
+    }
+
+    const result = await apiClient.ideas.generateRoadmap(id);
+    await offlineStorage.saveIdea(result.idea);
+    return result;
+  }
+
+  async generateValidationRoadmap(id: string): Promise<{ validationRoadmap: string; idea: Idea }> {
+    if (!this.isOnline) {
+      throw new Error('Cannot generate AI validation roadmap while offline');
+    }
+
+    if (id.startsWith('local-')) {
+      throw new Error('Please sync your idea first before generating AI validation roadmap');
+    }
+
+    const result = await apiClient.ideas.generateValidationRoadmap(id);
     await offlineStorage.saveIdea(result.idea);
     return result;
   }

@@ -111,8 +111,11 @@ export default function PrivacyPolicy() {
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">Contact Us</h2>
             <p className="text-gray-700 leading-relaxed">
               If you have any questions, concerns, or requests regarding this Privacy Policy or our data practices, please contact 
-              us through the application or by email. We are committed to addressing your privacy concerns and will respond to 
-              your inquiries in a timely manner.
+              us through the application or by email at{' '}
+              <a href="mailto:singh99amitoj@gmail.com" className="text-primary-600 hover:text-primary-700 underline">
+                singh99amitoj@gmail.com
+              </a>
+              . We are committed to addressing your privacy concerns and will respond to your inquiries in a timely manner.
             </p>
           </section>
         </div>

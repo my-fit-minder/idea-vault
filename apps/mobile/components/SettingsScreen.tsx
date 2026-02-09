@@ -258,7 +258,7 @@ export function SettingsScreen({ onClose }: SettingsScreenProps) {
             <View style={styles.divider} />
             <TouchableOpacity
               style={styles.row}
-              onPress={() => Linking.openURL('https://yourdomain.com/privacy')}
+              onPress={() => Linking.openURL('https://ideafy.zensthub.com/privacy/')}
             >
               <Text style={styles.actionLabel}>Privacy Policy</Text>
               <Text style={styles.chevron}>›</Text>
@@ -266,9 +266,17 @@ export function SettingsScreen({ onClose }: SettingsScreenProps) {
             <View style={styles.divider} />
             <TouchableOpacity
               style={styles.row}
-              onPress={() => Linking.openURL('https://yourdomain.com/terms')}
+              onPress={() => Linking.openURL('https://ideafy.zensthub.com/terms/')}
             >
               <Text style={styles.actionLabel}>Terms of Service</Text>
+              <Text style={styles.chevron}>›</Text>
+            </TouchableOpacity>
+            <View style={styles.divider} />
+            <TouchableOpacity
+              style={styles.row}
+              onPress={() => Linking.openURL('mailto:singh99amitoj@gmail.com')}
+            >
+              <Text style={styles.actionLabel}>Support</Text>
               <Text style={styles.chevron}>›</Text>
             </TouchableOpacity>
           </View>
@@ -279,7 +287,7 @@ export function SettingsScreen({ onClose }: SettingsScreenProps) {
           <Text style={styles.infoTitle}>💡 Offline Mode</Text>
           <Text style={styles.infoText}>
             Ideafy works offline! Create and edit ideas even without internet connection.
-            Your changes will automatically sync when you're back online.
+            Your changes will automatically sync when you&apos;re back online.
           </Text>
         </View>
       </ScrollView>

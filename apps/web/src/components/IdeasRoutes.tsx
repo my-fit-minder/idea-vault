@@ -408,21 +408,20 @@ function ViewIdeaPage() {
   const handleRegenerateAI = async (ideaToRegenerate: Idea) => {
     try {
       const { apiClient } = await import('../lib/apiClient');
-      await apiClient.ideas.generateReport(ideaToRegenerate.id);
+      const result = await apiClient.ideas.generateReport(ideaToRegenerate.id);
       
-      // Reload the idea
-       
-      const ideas = await syncService.getIdeas();
-       
-      const updatedIdea = ideas.find((i: Idea) => i.id === ideaToRegenerate.id);
-      if (updatedIdea) {
-         
-        setIdea(updatedIdea);
+      // Update the idea with the generated report
+      if (result.idea) {
+        setIdea(result.idea);
       }
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to generate AI report';
       alert(errorMessage);
     }
+  };
+
+  const handleIdeaUpdated = (updatedIdea: Idea) => {
+    setIdea(updatedIdea);
   };
 
   if (loading) {
@@ -456,6 +455,7 @@ function ViewIdeaPage() {
       }}
       onClose={handleClose}
       onRegenerate={handleRegenerateAI}
+      onIdeaUpdated={handleIdeaUpdated}
       isGeneratingReport={isGeneratingReport}
     />
   );

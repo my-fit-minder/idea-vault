@@ -38,8 +38,12 @@ export function IdeaDetail({
   const { isOnline } = useNetworkStatus();
 
   const [regenerating, setRegenerating] = useState(false);
+  const [regeneratingRoadmap, setRegeneratingRoadmap] = useState(false);
+  const [regeneratingValidationRoadmap, setRegeneratingValidationRoadmap] = useState(false);
   const [archiving, setArchiving] = useState(false);
   const [isReportExpanded, setIsReportExpanded] = useState(true);
+  const [isRoadmapExpanded, setIsRoadmapExpanded] = useState(true);
+  const [isValidationRoadmapExpanded, setIsValidationRoadmapExpanded] = useState(true);
 
   const isLocalOnly = idea.id.startsWith('local-');
 
@@ -126,23 +130,41 @@ export function IdeaDetail({
 
   const handleRegenerate = async () => {
     if (!isOnline) {
-      Alert.alert('Offline', 'Cannot generate AI report while offline');
+      Alert.alert('Offline', 'Cannot generate AI reports while offline');
       return;
     }
 
     if (isLocalOnly) {
-      Alert.alert('Sync Required', 'Please sync your idea first before generating AI report');
+      Alert.alert('Sync Required', 'Please sync your idea first before generating AI reports');
       return;
     }
 
     setRegenerating(true);
+    setRegeneratingRoadmap(true);
+    setRegeneratingValidationRoadmap(true);
     try {
-      const result = await syncService.generateReport(idea.id);
-      onIdeaUpdated(result.idea);
+      // Regenerate all three reports in parallel
+      const [reportResult, roadmapResult, validationRoadmapResult] = await Promise.all([
+        syncService.generateReport(idea.id),
+        syncService.generateRoadmap(idea.id),
+        syncService.generateValidationRoadmap(idea.id),
+      ]);
+      
+      // Update with the validation roadmap result (which should have all reports)
+      // Fall back to other results if needed
+      if (validationRoadmapResult.idea) {
+        onIdeaUpdated(validationRoadmapResult.idea);
+      } else if (roadmapResult.idea) {
+        onIdeaUpdated(roadmapResult.idea);
+      } else if (reportResult.idea) {
+        onIdeaUpdated(reportResult.idea);
+      }
     } catch (error: any) {
-      Alert.alert('Error', error.message || 'Failed to generate AI report');
+      Alert.alert('Error', error.message || 'Failed to regenerate reports');
     } finally {
       setRegenerating(false);
+      setRegeneratingRoadmap(false);
+      setRegeneratingValidationRoadmap(false);
     }
   };
 
@@ -269,37 +291,83 @@ export function IdeaDetail({
           </View>
         )}
 
-        {/* Generate Report Button */}
-        {!idea.ai_report && !isLocalOnly && (
+        {/* Product Roadmap */}
+        {idea.ai_roadmap && (
+          <View style={[styles.section, styles.roadmapSection]}>
+            <TouchableOpacity
+              style={styles.reportHeader}
+              onPress={() => setIsRoadmapExpanded(!isRoadmapExpanded)}
+            >
+              <View>
+                <Text style={styles.sectionTitle}>Product Roadmap</Text>
+                <Text style={styles.reportSubtitle}>
+                  Practical product roadmap with MVP scope, user flows, and validation milestones
+                </Text>
+              </View>
+              <Text style={styles.expandIcon}>{isRoadmapExpanded ? '▼' : '▶'}</Text>
+            </TouchableOpacity>
+            {isRoadmapExpanded && (
+              <View style={styles.reportContent}>
+                <Markdown style={markdownStyles}>{idea.ai_roadmap}</Markdown>
+              </View>
+            )}
+          </View>
+        )}
+
+        {/* Validation Roadmap */}
+        {idea.ai_validation_roadmap && (
+          <View style={[styles.section, styles.validationRoadmapSection]}>
+            <TouchableOpacity
+              style={styles.reportHeader}
+              onPress={() => setIsValidationRoadmapExpanded(!isValidationRoadmapExpanded)}
+            >
+              <View>
+                <Text style={styles.sectionTitle}>Validation Roadmap</Text>
+                <Text style={styles.reportSubtitle}>
+                  Idea-specific validation roadmap with hypotheses, experiments, and decision rules
+                </Text>
+              </View>
+              <Text style={styles.expandIcon}>{isValidationRoadmapExpanded ? '▼' : '▶'}</Text>
+            </TouchableOpacity>
+            {isValidationRoadmapExpanded && (
+              <View style={styles.reportContent}>
+                <Markdown style={markdownStyles}>{idea.ai_validation_roadmap}</Markdown>
+              </View>
+            )}
+          </View>
+        )}
+
+        {/* Generate Reports Button */}
+        {(!idea.ai_report || !idea.ai_roadmap || !idea.ai_validation_roadmap) && !isLocalOnly && (
           <TouchableOpacity
-            style={[styles.generateButton, (!isOnline || regenerating) && styles.generateButtonDisabled]}
+            style={[styles.generateButton, (!isOnline || regenerating || regeneratingRoadmap || regeneratingValidationRoadmap) && styles.generateButtonDisabled]}
             onPress={handleRegenerate}
-            disabled={!isOnline || regenerating}
+            disabled={!isOnline || regenerating || regeneratingRoadmap || regeneratingValidationRoadmap}
           >
-            {regenerating ? (
+            {(regenerating || regeneratingRoadmap || regeneratingValidationRoadmap) ? (
               <ActivityIndicator color="#fff" />
             ) : (
               <>
                 <Text style={styles.generateButtonIcon}>✨</Text>
-                <Text style={styles.generateButtonText}>Generate AI Report</Text>
+                <Text style={styles.generateButtonText}>Generate Reports</Text>
               </>
             )}
           </TouchableOpacity>
         )}
 
-        {/* Regenerate Report Button */}
-        {idea.ai_report && !isLocalOnly && (
+        {/* Regenerate Reports Button */}
+        {idea.ai_report && idea.ai_roadmap && idea.ai_validation_roadmap && !isLocalOnly && (
           <TouchableOpacity
-            style={[styles.regenerateButton, (!isOnline || regenerating) && styles.regenerateButtonDisabled]}
+            style={[styles.regenerateButton, (!isOnline || regenerating || regeneratingRoadmap || regeneratingValidationRoadmap) && styles.regenerateButtonDisabled]}
             onPress={handleRegenerate}
-            disabled={!isOnline || regenerating}
+            disabled={!isOnline || regenerating || regeneratingRoadmap || regeneratingValidationRoadmap}
           >
-            {regenerating ? (
+            {(regenerating || regeneratingRoadmap || regeneratingValidationRoadmap) ? (
               <ActivityIndicator color="#667eea" />
             ) : (
               <>
                 <Text style={styles.regenerateButtonIcon}>🔄</Text>
-                <Text style={styles.regenerateButtonText}>Regenerate AI Report</Text>
+                <Text style={styles.regenerateButtonText}>Regenerate Reports</Text>
               </>
             )}
           </TouchableOpacity>
@@ -484,6 +552,14 @@ const createStyles = (isDark: boolean, colors: typeof Colors.light) =>
     reportSection: {
       backgroundColor: '#f0f4ff',
       borderColor: '#c3dafe',
+    },
+    roadmapSection: {
+      backgroundColor: '#f0fff4',
+      borderColor: '#c6f6d5',
+    },
+    validationRoadmapSection: {
+      backgroundColor: '#fff5f0',
+      borderColor: '#fed7cc',
     },
     reportHeader: {
       flexDirection: 'row',

@@ -197,8 +197,11 @@ export default function TermsOfService() {
           <section className="mb-8">
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">16. Contact Information</h2>
             <p className="text-gray-700 leading-relaxed">
-              If you have any questions about these Terms of Service, please contact us through the application or by email. We will respond to your inquiries 
-              in a timely manner.
+              If you have any questions about these Terms of Service, please contact us through the application or by email at{' '}
+              <a href="mailto:singh99amitoj@gmail.com" className="text-primary-600 hover:text-primary-700 underline">
+                singh99amitoj@gmail.com
+              </a>
+              . We will respond to your inquiries in a timely manner.
             </p>
           </section>
         </div>

@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Settings } from 'lucide-react';
+import { Settings, Home, LogOut } from 'lucide-react';
 import { useAuthStore } from '../lib/authStore';
 import './IdeasApp.css';
 
@@ -27,17 +27,20 @@ export function IdeasAppHeader() {
         </div>
         <div className="header-actions">
           <button onClick={handleGoHome} className="home-button" title="Go to home">
-            🏠 Home
+            <Home size={18} />
+            <span className="button-text">Home</span>
           </button>
           <button onClick={handleSettings} className="settings-button" title="Settings">
             <Settings size={18} />
-            <span>Settings</span>
+            <span className="button-text">Settings</span>
           </button>
           <button 
             onClick={handleSignOut} 
             className="sign-out-button"
+            title="Sign Out"
           >
-            Sign Out
+            <LogOut size={18} />
+            <span className="button-text">Sign Out</span>
           </button>
         </div>
       </div>

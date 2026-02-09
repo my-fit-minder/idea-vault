@@ -127,5 +127,17 @@ export const apiClient = {
         method: 'POST',
       });
     },
+
+    generateRoadmap: (id: string): Promise<{ roadmap: string; idea: Idea }> => {
+      return request<{ roadmap: string; idea: Idea }>(`/api/ideas/${id}/generate-roadmap`, {
+        method: 'POST',
+      });
+    },
+
+    generateValidationRoadmap: (id: string): Promise<{ validationRoadmap: string; idea: Idea }> => {
+      return request<{ validationRoadmap: string; idea: Idea }>(`/api/ideas/${id}/generate-validation-roadmap`, {
+        method: 'POST',
+      });
+    },
   },
 };

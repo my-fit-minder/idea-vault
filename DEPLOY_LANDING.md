@@ -68,7 +68,7 @@ aws s3 sync out/ s3://idealot-landing --delete
 If changes aren't showing, invalidate the cache:
 
 ```bash
-aws cloudfront create-invalidation --distribution-id YOUR_DISTRIBUTION_ID --paths "/*"
+aws cloudfront create-invalidation --distribution-id E1HTXOSZZPEA0F --paths "/*"
 ```
 
 > Replace `YOUR_DISTRIBUTION_ID` with your actual CloudFront distribution ID.

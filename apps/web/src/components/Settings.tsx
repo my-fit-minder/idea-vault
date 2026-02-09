@@ -93,7 +93,6 @@ export function Settings() {
         }
 
         setCheckingUsername(true);
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
         const { available } = await apiClient.users.checkUsername(trimmedUsername);
         setCheckingUsername(false);
         
@@ -149,7 +148,6 @@ export function Settings() {
         setLoading(true);
         setCheckingUsername(true);
         try {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
           const { available } = await apiClient.users.checkUsername(trimmedUsername);
           setCheckingUsername(false);
           

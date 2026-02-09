@@ -108,6 +108,8 @@ class SyncService {
           tags: data.tags || [],
           ai_context: null,
           ai_report: null,
+          ai_roadmap: null,
+          ai_validation_roadmap: null,
           archived: false,
           deleted: false,
           created_at: new Date().toISOString(),

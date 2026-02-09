@@ -8,6 +8,8 @@ export interface Idea {
   content: string | null;
   ai_context: string | null;
   ai_report: string | null;
+  ai_roadmap: string | null;
+  ai_validation_roadmap: string | null;
   tags: string[];
   archived: boolean;
   deleted: boolean;
@@ -42,6 +44,8 @@ export interface UpdateIdeaInput {
   content?: string;
   ai_context?: string;
   ai_report?: string;
+  ai_roadmap?: string;
+  ai_validation_roadmap?: string;
   tags?: string[];
   archived?: boolean;
   deleted?: boolean;

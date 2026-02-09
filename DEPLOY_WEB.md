@@ -75,7 +75,7 @@ aws s3 sync dist/ s3://idealot-web-app --delete
 If changes aren't showing, invalidate the cache:
 
 ```bash
-aws cloudfront create-invalidation --distribution-id YOUR_DISTRIBUTION_ID --paths "/*"
+aws cloudfront create-invalidation --distribution-id E3GXL3H1DGVZWR --paths "/*"
 ```
 
 > Replace `YOUR_DISTRIBUTION_ID` with your actual CloudFront distribution ID.
